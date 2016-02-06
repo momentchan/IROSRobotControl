@@ -1,0 +1,48 @@
+﻿Build started 2016/2/6 上午 04:49:37.
+     1>Project "C:\Users\iCeiRA\Desktop\MJ\RobotArmControl\RobotArmControl\RobotArmControl.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\opencv\build\include /I"C:\Program Files\IntervalZero\RTX\\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt LuoLitaArm.cpp
+         LuoLitaArm.cpp
+     1>c:\opencv\build\include\opencv2\core\mat.hpp(1965): warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
+     1>c:\opencv\build\include\opencv2\core\persistence.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
+     1>c:\opencv\build\include\opencv2\core\utility.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\main.h(48): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\main.h(51): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(19): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(20): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(21): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(22): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(23): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(24): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(25): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(87): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(88): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(89): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(90): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(91): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(93): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(94): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(95): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(96): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(100): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(206): warning C4101: 'tempZ' : unreferenced local variable
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(205): warning C4101: 'tempY' : unreferenced local variable
+     1>c:\users\iceira\desktop\mj\robotarmcontrol\robotarmcontrol\luolitaarm.cpp(204): warning C4101: 'tempX' : unreferenced local variable
+       Link:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\iCeiRA\Desktop\MJ\RobotArmControl\Debug\RobotArmControl.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\opencv\build\x86\vc12\lib opencv_ts300d.lib opencv_world300d.lib IMCDriver.lib rtapi_w32.lib TcAdsDll.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libc /NODEFAULTLIB:libcd /NODEFAULTLIB:libcmt /NODEFAULTLIB:libcmtd /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\iCeiRA\Desktop\MJ\RobotArmControl\Debug\RobotArmControl.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\iCeiRA\Desktop\MJ\RobotArmControl\Debug\RobotArmControl.lib" /MACHINE:X86 Debug\CameraControl.obj
+         Debug\ControlLita.obj
+         Debug\DataStructure.obj
+         Debug\finger.obj
+         Debug\Gripper.obj
+         Debug\IMPCard.obj
+         Debug\LuoLitaArm.obj
+         Debug\LuoLitaArmFunc.obj
+         Debug\RobotLita.obj
+         Debug\SerialPortCom.obj
+         Debug\Utility.obj
+         RobotArmControl.vcxproj -> C:\Users\iCeiRA\Desktop\MJ\RobotArmControl\Debug\RobotArmControl.exe
+     1>Done Building Project "C:\Users\iCeiRA\Desktop\MJ\RobotArmControl\RobotArmControl\RobotArmControl.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.78
