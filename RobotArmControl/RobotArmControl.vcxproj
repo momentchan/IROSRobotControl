@@ -92,6 +92,7 @@
     <ClCompile Include="IMPCard.cpp" />
     <ClCompile Include="LuoLitaArm.cpp" />
     <ClCompile Include="LuoLitaArmFunc.cpp" />
+    <ClCompile Include="RobotControl.cpp" />
     <ClCompile Include="RobotLita.cpp" />
     <ClCompile Include="SerialPortCom.cpp" />
     <ClCompile Include="Utility.cpp" />

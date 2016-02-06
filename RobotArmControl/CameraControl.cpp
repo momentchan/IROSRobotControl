@@ -1,14 +1,13 @@
 #include "FuncDeclaration.h"
-extern int mode_display;
-extern bool mix;
 extern Point mousePosition;
 
-void DisplayInfo(const Mat image, Rect viewWindow, Stroke stroke, char & color, float & level, Vec4f & CMYK){
+void DisplayInfo(const Mat image, Rect viewWindow, Stroke &stroke, char & color, float & level, Vec4f & CMYK){
 	Vec3b targetRGB;
 	Vec4f targetCMYK;
 	if (mousePosition.x != 0){
 		targetRGB = image.at<Vec3b>(mousePosition.y, mousePosition.x);
 		rgb2cmyk(targetRGB, targetCMYK);
+		stroke = Stroke(targetRGB, targetCMYK, Point2f (0,0), Point2f (0,0), 2);
 	}
 	else{
 		targetRGB = stroke.getRGB();
@@ -64,18 +63,16 @@ void DisplayInfo(const Mat image, Rect viewWindow, Stroke stroke, char & color, 
 
 	Vec4f differ = targetCMYK - CMYK;
 
-	if (mode_display == 0){
-		printf("\n\n Color Detection\n");
-		printf(" Target: (%d,%d,%d,%d)\n", (int)targetCMYK[0], (int)targetCMYK[1], (int)targetCMYK[2], (int)targetCMYK[3]);
-		printf(" Detect: (%d,%d,%d,%d)\n", (int)CMYK[0], (int)CMYK[1], (int)CMYK[2], (int)CMYK[3]);
-		printf(" Differ: (%d,%d,%d,%d)\n\n", (int)differ[0], (int)differ[1], (int)differ[2], (int)differ[3]);
-	}
+	printf("\n\n Color Detection\n");
+	printf(" Target: (%d,%d,%d,%d)\n", (int)targetCMYK[0], (int)targetCMYK[1], (int)targetCMYK[2], (int)targetCMYK[3]);
+	printf(" Detect: (%d,%d,%d,%d)\n", (int)CMYK[0], (int)CMYK[1], (int)CMYK[2], (int)CMYK[3]);
+	printf(" Differ: (%d,%d,%d,%d)\n\n", (int)differ[0], (int)differ[1], (int)differ[2], (int)differ[3]);
 
 	// Decide initial Color
 	int colorToDraw = 0;
 	float maxDiffer = 0;
 
-	for (int i = 0; i < 4; i++){
+	for (int i = 0; i < 3; i++){
 		if (abs(int(differ[i]))>maxDiffer){
 			if (int(differ[i]) > 0){
 				colorToDraw = i;

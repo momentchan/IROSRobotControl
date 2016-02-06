@@ -34,6 +34,8 @@ using namespace cv;
 #define DISPLAY 0
 #define SIMULATION 1
 #define CANNY 1
+#define ROBOT_ON 1
+#define pi_f 3.14159
 
 // Data Structure
 class Stroke{
@@ -52,6 +54,10 @@ public:
 	}
 	Vec3b getRGB(){ return RGB; }
 	Vec4f getCMYK(){ return CMYK; }
+	Point2f getPoint(int i){ 
+		if (i == 0) return start; 
+		else if (i == 1) return end;
+	}
 private:
 	Vec3b RGB;
 	Vec4f CMYK;

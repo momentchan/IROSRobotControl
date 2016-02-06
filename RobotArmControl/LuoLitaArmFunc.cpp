@@ -217,7 +217,7 @@ void init_LuoLita_1()
 	//	Sleep(30);
 	//	/*Sleep(29);
 	//	system("cls");
-	//	DisplayLoop(0);*/
+	//	DisplayLoop();*/
 	//}
 }
 
@@ -258,7 +258,7 @@ void init_LuoLita_2()
 			break;
 		}
 		system("cls");
-		DisplayLoop(0);
+		DisplayLoop();
 	}
 
 	movetoReady = true;
@@ -276,7 +276,7 @@ void init_LuoLita_2()
 			break;
 		}
 		system("cls");
-		DisplayLoop(0);
+		DisplayLoop();
 	}
 
 	GoToReadyPose2();
@@ -293,7 +293,7 @@ void init_LuoLita_2()
 			break;
 		}
 		system("cls");
-		DisplayLoop(0);
+		DisplayLoop();
 	}
 
 	mode_cmd = 2;
@@ -315,7 +315,7 @@ void init_LuoLita_2()
 			break;
 		}
 		system("cls");
-		DisplayLoop(0);
+		DisplayLoop();
 	}
 
 	mode_cmd = 1;
@@ -1892,7 +1892,7 @@ void MainLoop_keyboard()
 	kbCmd = ' ';
 }*/
 
-void DisplayLoop(float speed)
+void DisplayLoop()
 {
 	cout << "  Luo Lita Arm" << endl;
 	if (mode_display == 1)
@@ -2062,7 +2062,6 @@ void DisplayLoop(float speed)
 		cout << "  MOVL: " << MOVL << "  MOVL_L: " << MOVL_L << "  MOVL_R: " << MOVL_R << "  MOVJN: " << MOVJN << "  DEC_L: " << MOVLDEC_L << "  TestComputeLose: " << TestComputeLose << " TestNumber: " << TestNumber << endl;
 		//40.			
 		cout << FORCE_TRACKING << "  d3: " << d3 << "  ENC7: " << setw(4) << ENC7 << setw(6) << ENC7_BL << setw(8) << ENC7_e << "  Fz: " << Fz << " TestStep: " << TestStep;
-		cout << endl << "  Moving speed: " << speed << "   ";
 }
 
 void OutputData()

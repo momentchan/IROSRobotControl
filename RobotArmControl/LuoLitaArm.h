@@ -74,12 +74,11 @@ void ByeBye();
 void MainLoop_keyboard();
 void MyLoop_keyboard();
 
-void DisplayLoop(float);
+void DisplayLoop();
 
 void OutputData();
 
-void setDefaultArmSpeed(float percentage = 1.0f);
-void readDrawPoints();
+
 
 
 

@@ -20,10 +20,10 @@ void rgb2cmyk(const Vec3b bgr, Vec4f & cmyk) {
 	float b = B / 255.;
 	float k = std::min(std::min(1 - r, 1 - g), 1 - b);
 
-	cmyk[0] = (1 - r - k) / (1 - k) * 100.;
-	cmyk[1] = (1 - g - k) / (1 - k) * 100.;
-	cmyk[2] = (1 - b - k) / (1 - k) * 100.;
-	cmyk[3] = k * 100.;
+	cmyk[0] = (1 - r - k) / (1 - k) * 255.;
+	cmyk[1] = (1 - g - k) / (1 - k) * 255.;
+	cmyk[2] = (1 - b - k) / (1 - k) * 255.;
+	cmyk[3] = k * 255.;
 }
 void ShowImg(string window_name, Mat img){
 	imshow(window_name, img);
