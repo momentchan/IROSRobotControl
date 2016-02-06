@@ -511,7 +511,7 @@ void Init_ControlLita()
 	K_vel_P[3] = 0.010f;//0.016f;
 	K_vel_P[4] = 0.004f;//0.008f;
 	K_vel_P[5] = 0.005f;//0.010f;
-	K_vel_P[6] = 0.0006f;//0.004f;
+	K_vel_P[6] = 0.0005f;//0.004f;
 
 	K_vel_p2I[0] = 0.0060f;//0.010f;
 	K_vel_p2I[1] = 0.0080f;//0.010f;
@@ -527,7 +527,7 @@ void Init_ControlLita()
 	K_pos_P[3] = 0.00020f;
 	K_pos_P[4] = 0.00015f;
 	K_pos_P[5] = 0.00030f;
-	K_pos_P[6] = 0.000016f;
+	K_pos_P[6] = 0.000015f;
 
 	K_pos_p2I[0] = 0.0f;//0.004f;//0.080f;
 	K_pos_p2I[1] = 0.0f;//0.004f;//0.080f;

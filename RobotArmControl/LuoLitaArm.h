@@ -2,7 +2,7 @@
 #include <rtapi.h>
 #include <wchar.h>
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -80,7 +80,6 @@ void OutputData();
 
 void setDefaultArmSpeed(float percentage = 1.0f);
 void readDrawPoints();
-string int2str(int);
-vector<string> split(string, char);
+
 
 

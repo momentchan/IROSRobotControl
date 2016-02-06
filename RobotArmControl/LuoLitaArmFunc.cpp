@@ -1894,78 +1894,78 @@ void MainLoop_keyboard()
 
 void DisplayLoop(float speed)
 {
-
-	if( mode_display == 1)
+	cout << "  Luo Lita Arm" << endl;
+	if (mode_display == 1)
 	{
-			//1.
-			cout << "  Luo Lita Arm" << endl;
-			//2.
-			cout << "       qTarget      qCmd      q(rad)   error_ENC   TqComp.(mNm)  SetValue(V)" << endl;
-			//3.
-			cout << endl;
+		//1.
+		
+		//2.
+		cout << "       qTarget      qCmd      q(rad)   error_ENC   TqComp.(mNm)  SetValue(V)" << endl;
+		//3.
+		cout << endl;
 
-			if(mode_cmd == 1 ||mode_cmd == 0)
-			{
+		if (mode_cmd == 1 || mode_cmd == 0)
+		{
 			//4.q1
-			cout << "  1 " << setw(10) << rad2deg*q_trgt[0] <<  setw(10) << qCmd_deg[0] << setw(10) << q_deg[0] << setw(10) << dqmTrgt_ENC[0] << setw(6) << error_qm_ENC[0] << setw(12) <<						 '0' << setw(14) << SetValue[0] << endl;
+			cout << "  1 " << setw(10) << rad2deg*q_trgt[0] << setw(10) << qCmd_deg[0] << setw(10) << q_deg[0] << setw(10) << dqmTrgt_ENC[0] << setw(6) << error_qm_ENC[0] << setw(12) << '0' << setw(14) << SetValue[0] << endl;
 			//5.q2
-			cout << "  2 " << setw(10) << rad2deg*q_trgt[1] <<  setw(10) << qCmd_deg[1] << setw(10) << q_deg[1] << setw(10) << dqmTrgt_ENC[1] << setw(6) << error_qm_ENC[1] << setw(12) <<torque2setvalue[1]*Tq_g[1] << setw(14) << SetValue[1] << endl;
+			cout << "  2 " << setw(10) << rad2deg*q_trgt[1] << setw(10) << qCmd_deg[1] << setw(10) << q_deg[1] << setw(10) << dqmTrgt_ENC[1] << setw(6) << error_qm_ENC[1] << setw(12) << torque2setvalue[1] * Tq_g[1] << setw(14) << SetValue[1] << endl;
 			//6.q3
-			cout << "  3 " << setw(10) << rad2deg*q_trgt[2] <<  setw(10) << qCmd_deg[2] << setw(10) << q_deg[2] << setw(10) << dqmTrgt_ENC[2] << setw(6) << error_qm_ENC[2] << setw(12) <<torque2setvalue[2]*Tq_g[2] << setw(14) << SetValue[2] << endl;
+			cout << "  3 " << setw(10) << rad2deg*q_trgt[2] << setw(10) << qCmd_deg[2] << setw(10) << q_deg[2] << setw(10) << dqmTrgt_ENC[2] << setw(6) << error_qm_ENC[2] << setw(12) << torque2setvalue[2] * Tq_g[2] << setw(14) << SetValue[2] << endl;
 			//7.
-			cout << "  4 " << setw(10) << rad2deg*q_trgt[3] <<  setw(10) << qCmd_deg[3] << setw(10) << q_deg[3] << setw(10) << dqmTrgt_ENC[3] << setw(6) << error_qm_ENC[3] << setw(12) <<torque2setvalue[3]*Tq_g[3] << setw(14) << SetValue[3] << endl;
+			cout << "  4 " << setw(10) << rad2deg*q_trgt[3] << setw(10) << qCmd_deg[3] << setw(10) << q_deg[3] << setw(10) << dqmTrgt_ENC[3] << setw(6) << error_qm_ENC[3] << setw(12) << torque2setvalue[3] * Tq_g[3] << setw(14) << SetValue[3] << endl;
 			//8.
 			cout << endl;
 			//9.q5
-			cout << "  5 " << setw(10) << rad2deg*q_trgt[4] <<  setw(10) << qCmd_deg[4] << setw(10) << q_deg[4] << setw(10) << dqmTrgt_ENC[4] << setw(6) << error_qm_ENC[4] << setw(12) <<torque2setvalue[4]*Tq_g[4] << setw(14) << SetValue[4] << endl;
+			cout << "  5 " << setw(10) << rad2deg*q_trgt[4] << setw(10) << qCmd_deg[4] << setw(10) << q_deg[4] << setw(10) << dqmTrgt_ENC[4] << setw(6) << error_qm_ENC[4] << setw(12) << torque2setvalue[4] * Tq_g[4] << setw(14) << SetValue[4] << endl;
 			//10.q6
-			cout << "  6 " << setw(10) << rad2deg*q_trgt[5] <<  setw(10) << qCmd_deg[5] << setw(10) << q_deg[5] << setw(10) << dqmTrgt_ENC[5] << setw(6) << error_qm_ENC[5] << setw(12) <<torque2setvalue[5]*Tq_g[5] << setw(14) << SetValue[5] << endl;
+			cout << "  6 " << setw(10) << rad2deg*q_trgt[5] << setw(10) << qCmd_deg[5] << setw(10) << q_deg[5] << setw(10) << dqmTrgt_ENC[5] << setw(6) << error_qm_ENC[5] << setw(12) << torque2setvalue[5] * Tq_g[5] << setw(14) << SetValue[5] << endl;
 			//11.q7
-			cout << "  7 " << setw(10) << rad2deg*q_trgt[6] <<  setw(10) << qCmd_deg[6] << setw(10) << q_deg[6] << setw(10) << dqmTrgt_ENC[6] << setw(6) << error_qm_ENC[6] << setw(12) <<						 '0' << setw(14) << SetValue[6] << endl;
-				//12.
+			cout << "  7 " << setw(10) << rad2deg*q_trgt[6] << setw(10) << qCmd_deg[6] << setw(10) << q_deg[6] << setw(10) << dqmTrgt_ENC[6] << setw(6) << error_qm_ENC[6] << setw(12) << '0' << setw(14) << SetValue[6] << endl;
+			//12.
 			cout << endl;
 			//13.
-			cout << "  Arm Angle: Psi Target:" << setw(10) <<  Psi_trgt << "-" << setw(10) << PsiCmd << "  Psi:" << setw(10) << Psi << endl;
-			}
-			else
-			{
+			cout << "  Arm Angle: Psi Target:" << setw(10) << Psi_trgt << "-" << setw(10) << PsiCmd << "  Psi:" << setw(10) << Psi << endl;
+		}
+		else
+		{
 			//4.q1
-			cout << "  1 " << setw(10) <<				"-" <<  setw(10) << qCmd_deg[0] << setw(10) << q_deg[0] << setw(12) << error_qm_ENC[0] << setw(16) <<						   '0' << setw(14) << -SetValue[0] << endl;
+			cout << "  1 " << setw(10) << "-" << setw(10) << qCmd_deg[0] << setw(10) << q_deg[0] << setw(12) << error_qm_ENC[0] << setw(16) << '0' << setw(14) << -SetValue[0] << endl;
 			//5.q2
-			cout << "  2 " << setw(10) <<				"-" <<  setw(10) << qCmd_deg[1] << setw(10) << q_deg[1] << setw(12) << error_qm_ENC[1] << setw(16) <<  torque2setvalue[1]*Tq_g[1] << setw(14) <<  SetValue[1] << endl;
+			cout << "  2 " << setw(10) << "-" << setw(10) << qCmd_deg[1] << setw(10) << q_deg[1] << setw(12) << error_qm_ENC[1] << setw(16) << torque2setvalue[1] * Tq_g[1] << setw(14) << SetValue[1] << endl;
 			//6.q3
-			cout << "  3 " << setw(10) <<				"-" <<  setw(10) << qCmd_deg[2] << setw(10) << q_deg[2] << setw(12) << error_qm_ENC[2] << setw(16) << -torque2setvalue[2]*Tq_g[2] << setw(14) << -SetValue[2] << endl;
+			cout << "  3 " << setw(10) << "-" << setw(10) << qCmd_deg[2] << setw(10) << q_deg[2] << setw(12) << error_qm_ENC[2] << setw(16) << -torque2setvalue[2] * Tq_g[2] << setw(14) << -SetValue[2] << endl;
 			//7.
-			cout << "  4 " << setw(10) <<				"-" <<  setw(10) << qCmd_deg[3] << setw(10) << q_deg[3] << setw(12) << error_qm_ENC[3] << setw(16) <<  torque2setvalue[3]*Tq_g[3] << setw(14) <<  SetValue[3] << endl;
+			cout << "  4 " << setw(10) << "-" << setw(10) << qCmd_deg[3] << setw(10) << q_deg[3] << setw(12) << error_qm_ENC[3] << setw(16) << torque2setvalue[3] * Tq_g[3] << setw(14) << SetValue[3] << endl;
 			//8.
 			cout << endl;
 			//9.q5
-			cout << "  5 " << setw(10) <<				"-" <<  setw(10) << qCmd_deg[4] << setw(10) << q_deg[4] << setw(12) << error_qm_ENC[4] << setw(16) << -torque2setvalue[4]*Tq_g[4] << setw(14) << -SetValue[4] << endl;
+			cout << "  5 " << setw(10) << "-" << setw(10) << qCmd_deg[4] << setw(10) << q_deg[4] << setw(12) << error_qm_ENC[4] << setw(16) << -torque2setvalue[4] * Tq_g[4] << setw(14) << -SetValue[4] << endl;
 			//10.q6
-			cout << "  6 " << setw(10) <<				"-" <<  setw(10) << qCmd_deg[5] << setw(10) << q_deg[5] << setw(12) << error_qm_ENC[5] << setw(16) <<  torque2setvalue[5]*Tq_g[5] << setw(14) <<  SetValue[5] << endl;
+			cout << "  6 " << setw(10) << "-" << setw(10) << qCmd_deg[5] << setw(10) << q_deg[5] << setw(12) << error_qm_ENC[5] << setw(16) << torque2setvalue[5] * Tq_g[5] << setw(14) << SetValue[5] << endl;
 			//11.q7
-			cout << "  7 " << setw(10) <<				"-" <<  setw(10) << qCmd_deg[6] << setw(10) << q_deg[6] << setw(12) << error_qm_ENC[6] << setw(16) <<						   '0' << setw(14) << -SetValue[6] << endl;
-				//12.
+			cout << "  7 " << setw(10) << "-" << setw(10) << qCmd_deg[6] << setw(10) << q_deg[6] << setw(12) << error_qm_ENC[6] << setw(16) << '0' << setw(14) << -SetValue[6] << endl;
+			//12.
 			cout << endl;
 			//13.
-			cout << "  Arm Angle: Psi Target:" << setw(8) <<  Psi_trgt << "  Psi_Cmd:" << setw(8) << PsiCmd << "  Psi:" << setw(8) << Psi << " dPsi:" << setw(8) << dPsi*100.0f << endl;
-			}
-			
-			//14.
-			cout << "  Ttarget:" << endl;
-			if(mode_cmd == 2)
-			{
+			cout << "  Arm Angle: Psi Target:" << setw(8) << Psi_trgt << "  Psi_Cmd:" << setw(8) << PsiCmd << "  Psi:" << setw(8) << Psi << " dPsi:" << setw(8) << dPsi*100.0f << endl;
+		}
+
+		//14.
+		cout << "  Ttarget:" << endl;
+		if (mode_cmd == 2)
+		{
 			//15.x
-			cout << setw(10) << T_trgt(0,0) << setw(8) << T_trgt(0,1) << setw(8) << T_trgt(0,2) << setw(10) << 1000.0f*T_trgt(0,3) << endl;
+			cout << setw(10) << T_trgt(0, 0) << setw(8) << T_trgt(0, 1) << setw(8) << T_trgt(0, 2) << setw(10) << 1000.0f*T_trgt(0, 3) << endl;
 			//16.y
-			cout << setw(10) << T_trgt(1,0) << setw(8) << T_trgt(1,1) << setw(8) << T_trgt(1,2) << setw(10) << 1000.0f*T_trgt(1,3) << endl;
+			cout << setw(10) << T_trgt(1, 0) << setw(8) << T_trgt(1, 1) << setw(8) << T_trgt(1, 2) << setw(10) << 1000.0f*T_trgt(1, 3) << endl;
 			//17.z
-			cout << setw(10) << T_trgt(2,0) << setw(8) << T_trgt(2,1) << setw(8) << T_trgt(2,2) << setw(10) << 1000.0f*T_trgt(2,3) << endl;
+			cout << setw(10) << T_trgt(2, 0) << setw(8) << T_trgt(2, 1) << setw(8) << T_trgt(2, 2) << setw(10) << 1000.0f*T_trgt(2, 3) << endl;
 			//18.
 			cout << setw(10) << "0" << setw(8) << "0" << setw(8) << "0" << setw(10) << "1" << endl;
-			}
-			else
-			{
+		}
+		else
+		{
 			//15.x
 			cout << "  -" << endl;
 			//16.y
@@ -1974,96 +1974,95 @@ void DisplayLoop(float speed)
 			cout << "  -" << endl;
 			//18.
 			cout << "  -" << endl;
-			}
-			//19.
-			cout << setw(48) << "F_imped:" << setw(10) << "Tq_imped:" << setw(10) << "Tq_null:" << endl;
-			//20.
-			cout << "  Tcmd: " << endl;
-			//21.
-			cout << setw(10) << T07Cmd(0,0) << setw(8) << T07Cmd(0,1) << setw(8) << T07Cmd(0,2) << setw(10) << 1000.0f*T07Cmd(0,3) << "; Fx:" << setw(6) << F0wCmd(0,0) << ";Tq_1:"<< setw(6) << -torque2setvalue[0]*Tq_imped(0,0)/MT0_GEAR_RATIO << ";" << setw(6) << -torque2setvalue[0]*Tq_null[0] << endl;
-			//22.
-			cout << setw(10) << T07Cmd(1,0) << setw(8) << T07Cmd(1,1) << setw(8) << T07Cmd(1,2) << setw(10) << 1000.0f*T07Cmd(1,3) << "; Fy:" << setw(6) << F0wCmd(1,0) << ";Tq_2:"<< setw(6) <<  torque2setvalue[1]*Tq_imped(1,0)/MT1_GEAR_RATIO << ";" << setw(6) <<  torque2setvalue[1]*Tq_null[1] << endl;
-			//23.
-			cout << setw(10) << T07Cmd(2,0) << setw(8) << T07Cmd(2,1) << setw(8) << T07Cmd(2,2) << setw(10) << 1000.0f*T07Cmd(2,3) << "; Fz:" << setw(6) << F0wCmd(2,0) << ";Tq_3:"<< setw(6) << -torque2setvalue[2]*Tq_imped(2,0)/MT2_GEAR_RATIO << ";" << setw(6) << -torque2setvalue[2]*Tq_null[2] << endl;
-			//24.
-			cout << setw(10) << "0" << setw(8) << "0" << setw(8) << "0" << setw(10) << "1" << setw(17) << ";Tq_4:"<< setw(6) << torque2setvalue[3]*Tq_imped(3,0)/MT3_GEAR_RATIO << ";" << setw(6) << torque2setvalue[3]*Tq_null[3] << endl;
-			//25.
-			cout << endl;
-			//26.
-			//cout << "  T:                        dT:    (mm/s)  (rad/s)" << endl;
-			//26.
-			cout << "     T: " << endl;
-			//27.
-			cout << setw(10) << T07(0,0) << setw(8) << T07(0,1) << setw(8) << T07(0,2) << setw(10) << 1000.0f*T07(0,3) << "; Mx:" << setw(6) << M0wCmd(0,0) << ";Tq_5:"<< setw(6) << -torque2setvalue[4]*Tq_imped(4,0)/MT4_GEAR_RATIO << ";" << setw(6) << -torque2setvalue[4]*Tq_null[4] << endl;
-			//28.
-			cout << setw(10) << T07(1,0) << setw(8) << T07(1,1) << setw(8) << T07(1,2) << setw(10) << 1000.0f*T07(1,3) << "; My:" << setw(6) << M0wCmd(1,0) << ";Tq_6:"<< setw(6) <<  torque2setvalue[5]*Tq_imped(5,0)/MT5_GEAR_RATIO << ";" << setw(6) <<  torque2setvalue[5]*Tq_null[5] << endl;
-			//29.
-			cout << setw(10) << T07(2,0) << setw(8) << T07(2,1) << setw(8) << T07(2,2) << setw(10) << 1000.0f*T07(2,3) << "; Mz:" << setw(6) << M0wCmd(2,0) << ";Tq_7:"<< setw(6) << -torque2setvalue[6]*Tq_imped(6,0)/MT6_GEAR_RATIO << ";" << setw(6) << -torque2setvalue[6]*Tq_null[6] << endl;
-			//30.
-			cout << setw(10) << "0" << setw(8) << "0" << setw(8) << "0" << setw(10) << "1" << endl;
-			//31.
-			cout << endl;
-			//32.
-			cout << "  parameter: ";
-			cout << endl;
-	        /*switch(ParameterIndex)
-			{
-			case 0:
-				cout << endl;
-				break;
-			case 1:
-				cout << endl;
-				break;
-			case 2:
-				cout << endl;
-				break;
-			case 3:
-				cout << endl;
-				break;
-			case 4:
-				cout << endl;
-				break;
-			case 5:
-				cout << endl;
-				break;
-			}*/
-			//33.
-			cout << endl;
-			//34.
-			if( mode_cmd == 1)
-			{
-				if( movetoReady == true)
-					cout << "  moving to ready pose..." << endl;
-				else
-					cout << "  Joint Mode" << endl;
-			}
-			else if( mode_cmd == 2)
-			{
-				if( mode_imped == true)
-					cout << "  Impedence Mode" << endl;
-				else
-					cout << "  Cartesian Mode" << endl;
-			}
-			else
-				cout << "  mode: " << mode_cmd << endl;
-			//35.
-			if( mode_cmd == 1)
-				cout << "  ModeArm: " << ModeArm << endl;
-			else
-				cout << "  ModeArm: " << ModeArm << "  SubMode: " << SubMode << "  nullAuxTq: " << nullAuxTq << endl;
-			//36.
-			cout << "  modeMotion_J: " << modeMotion_J << "  modeMotion_C: " << modeMotion_C << endl;
-			//37.
-			cout << "  MOVJ: " << MOVJ << "  MOV: " << setw(6) << MOV[0] << setw(6) << MOV[1] << setw(6) << MOV[2] << setw(6) << MOV[3] << setw(6) << MOV[4] << setw(6) << MOV[5] << setw(6) << MOV[6] << endl;
-			//38.
-			cout << setw(16) <<"noMOV_count:" <<setw(6)<<noMOV_count[0] <<setw(6)<<noMOV_count[1] <<setw(6)<<noMOV_count[2] <<setw(6)<<noMOV_count[3] <<setw(6)<<noMOV_count[4] <<setw(6)<<noMOV_count[5] <<setw(6)<<noMOV_count[6] << endl;
-			//39
-			cout << "  MOVL: " << MOVL << "  MOVL_L: " << MOVL_L << "  MOVL_R: " << MOVL_R << "  MOVJN: " << MOVJN << "  DEC_L: " << MOVLDEC_L << "  TestComputeLose: " << TestComputeLose << " TestNumber: " << TestNumber << endl;
-			//40.			
-			cout << FORCE_TRACKING << "  d3: " << d3 << "  ENC7: " << setw(4) << ENC7 << setw(6) << ENC7_BL << setw(8) << ENC7_e << "  Fz: " << Fz << " TestStep: " << TestStep;
-			cout << endl <<"  Moving speed: "<< speed;
+		}
 	}
-
+		//19.
+		cout << setw(48) << "F_imped:" << setw(10) << "Tq_imped:" << setw(10) << "Tq_null:" << endl;
+		//20.
+		cout << "  Tcmd: " << endl;
+		//21.
+		cout << setw(10) << T07Cmd(0,0) << setw(8) << T07Cmd(0,1) << setw(8) << T07Cmd(0,2) << setw(10) << 1000.0f*T07Cmd(0,3) << "; Fx:" << setw(6) << F0wCmd(0,0) << ";Tq_1:"<< setw(6) << -torque2setvalue[0]*Tq_imped(0,0)/MT0_GEAR_RATIO << ";" << setw(6) << -torque2setvalue[0]*Tq_null[0] << endl;
+		//22.
+		cout << setw(10) << T07Cmd(1,0) << setw(8) << T07Cmd(1,1) << setw(8) << T07Cmd(1,2) << setw(10) << 1000.0f*T07Cmd(1,3) << "; Fy:" << setw(6) << F0wCmd(1,0) << ";Tq_2:"<< setw(6) <<  torque2setvalue[1]*Tq_imped(1,0)/MT1_GEAR_RATIO << ";" << setw(6) <<  torque2setvalue[1]*Tq_null[1] << endl;
+		//23.
+		cout << setw(10) << T07Cmd(2,0) << setw(8) << T07Cmd(2,1) << setw(8) << T07Cmd(2,2) << setw(10) << 1000.0f*T07Cmd(2,3) << "; Fz:" << setw(6) << F0wCmd(2,0) << ";Tq_3:"<< setw(6) << -torque2setvalue[2]*Tq_imped(2,0)/MT2_GEAR_RATIO << ";" << setw(6) << -torque2setvalue[2]*Tq_null[2] << endl;
+		//24.
+		cout << setw(10) << "0" << setw(8) << "0" << setw(8) << "0" << setw(10) << "1" << setw(17) << ";Tq_4:"<< setw(6) << torque2setvalue[3]*Tq_imped(3,0)/MT3_GEAR_RATIO << ";" << setw(6) << torque2setvalue[3]*Tq_null[3] << endl;
+		//25.
+		cout << endl;
+		//26.
+		//cout << "  T:                        dT:    (mm/s)  (rad/s)" << endl;
+		//26.
+		cout << "     T: " << endl;
+		//27.
+		cout << setw(10) << T07(0,0) << setw(8) << T07(0,1) << setw(8) << T07(0,2) << setw(10) << 1000.0f*T07(0,3) << "; Mx:" << setw(6) << M0wCmd(0,0) << ";Tq_5:"<< setw(6) << -torque2setvalue[4]*Tq_imped(4,0)/MT4_GEAR_RATIO << ";" << setw(6) << -torque2setvalue[4]*Tq_null[4] << endl;
+		//28.
+		cout << setw(10) << T07(1,0) << setw(8) << T07(1,1) << setw(8) << T07(1,2) << setw(10) << 1000.0f*T07(1,3) << "; My:" << setw(6) << M0wCmd(1,0) << ";Tq_6:"<< setw(6) <<  torque2setvalue[5]*Tq_imped(5,0)/MT5_GEAR_RATIO << ";" << setw(6) <<  torque2setvalue[5]*Tq_null[5] << endl;
+		//29.
+		cout << setw(10) << T07(2,0) << setw(8) << T07(2,1) << setw(8) << T07(2,2) << setw(10) << 1000.0f*T07(2,3) << "; Mz:" << setw(6) << M0wCmd(2,0) << ";Tq_7:"<< setw(6) << -torque2setvalue[6]*Tq_imped(6,0)/MT6_GEAR_RATIO << ";" << setw(6) << -torque2setvalue[6]*Tq_null[6] << endl;
+		//30.
+		cout << setw(10) << "0" << setw(8) << "0" << setw(8) << "0" << setw(10) << "1" << endl;
+		//31.
+		cout << endl;
+		//32.
+		cout << "  parameter: ";
+		cout << endl;
+	    /*switch(ParameterIndex)
+		{
+		case 0:
+			cout << endl;
+			break;
+		case 1:
+			cout << endl;
+			break;
+		case 2:
+			cout << endl;
+			break;
+		case 3:
+			cout << endl;
+			break;
+		case 4:
+			cout << endl;
+			break;
+		case 5:
+			cout << endl;
+			break;
+		}*/
+		//33.
+		cout << endl;
+		//34.
+		if( mode_cmd == 1)
+		{
+			if( movetoReady == true)
+				cout << "  moving to ready pose..." << endl;
+			else
+				cout << "  Joint Mode" << endl;
+		}
+		else if( mode_cmd == 2)
+		{
+			if( mode_imped == true)
+				cout << "  Impedence Mode" << endl;
+			else
+				cout << "  Cartesian Mode" << endl;
+		}
+		else
+			cout << "  mode: " << mode_cmd << endl;
+		//35.
+		if( mode_cmd == 1)
+			cout << "  ModeArm: " << ModeArm << endl;
+		else
+			cout << "  ModeArm: " << ModeArm << "  SubMode: " << SubMode << "  nullAuxTq: " << nullAuxTq << endl;
+		//36.
+		cout << "  modeMotion_J: " << modeMotion_J << "  modeMotion_C: " << modeMotion_C << endl;
+		//37.
+		cout << "  MOVJ: " << MOVJ << "  MOV: " << setw(6) << MOV[0] << setw(6) << MOV[1] << setw(6) << MOV[2] << setw(6) << MOV[3] << setw(6) << MOV[4] << setw(6) << MOV[5] << setw(6) << MOV[6] << endl;
+		//38.
+		cout << setw(16) <<"noMOV_count:" <<setw(6)<<noMOV_count[0] <<setw(6)<<noMOV_count[1] <<setw(6)<<noMOV_count[2] <<setw(6)<<noMOV_count[3] <<setw(6)<<noMOV_count[4] <<setw(6)<<noMOV_count[5] <<setw(6)<<noMOV_count[6] << endl;
+		//39
+		cout << "  MOVL: " << MOVL << "  MOVL_L: " << MOVL_L << "  MOVL_R: " << MOVL_R << "  MOVJN: " << MOVJN << "  DEC_L: " << MOVLDEC_L << "  TestComputeLose: " << TestComputeLose << " TestNumber: " << TestNumber << endl;
+		//40.			
+		cout << FORCE_TRACKING << "  d3: " << d3 << "  ENC7: " << setw(4) << ENC7 << setw(6) << ENC7_BL << setw(8) << ENC7_e << "  Fz: " << Fz << " TestStep: " << TestStep;
+		cout << endl << "  Moving speed: " << speed << "   ";
 }
 
 void OutputData()

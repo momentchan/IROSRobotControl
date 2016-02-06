@@ -1,8 +1,19 @@
 #include "FuncDeclaration.h"
+extern int mode_display;
+extern bool mix;
+extern Point mousePosition;
 
-void DisplayInfo(const Mat image, Rect viewWindow, Stroke stroke, char & color, int & level){
-	Vec3b targetRGB = stroke.getRGB();
-	Vec4f targetCMYK = stroke.getCMYK();
+void DisplayInfo(const Mat image, Rect viewWindow, Stroke stroke, char & color, float & level, Vec4f & CMYK){
+	Vec3b targetRGB;
+	Vec4f targetCMYK;
+	if (mousePosition.x != 0){
+		targetRGB = image.at<Vec3b>(mousePosition.y, mousePosition.x);
+		rgb2cmyk(targetRGB, targetCMYK);
+	}
+	else{
+		targetRGB = stroke.getRGB();
+		targetCMYK = stroke.getCMYK();
+	}
 	Point center = Point(viewWindow.x + viewWindow.width / 2, viewWindow.y + viewWindow.height / 2);
 	Vec3b rgb = image.at<Vec3b>(center.y, center.x);
 
@@ -11,18 +22,16 @@ void DisplayInfo(const Mat image, Rect viewWindow, Stroke stroke, char & color, 
 	int w = image.cols, h = image.rows;
 	int patch_size = 50;
 
-	
+
 	// Draw marker
 	line(image, Point(center.x - 10, center.y), Point(center.x + 10, center.y), Scalar(0, 0, 255));
 	line(image, Point(center.x, center.y - 10), Point(center.x, center.y + 10), Scalar(0, 0, 255));
 
-	Vec4f CMYK;
 	rgb2cmyk(rgb, CMYK);
 
 	// Rescale to 100
 	CMYK *= 100. / 255.;
 	targetCMYK *= 100. / 255.;
-
 	// Color Information
 	sprintf_s(name, "C=%d", (int)CMYK[0]);
 	putText(image, name, Point(25, 40), FONT_HERSHEY_SIMPLEX, .7, Scalar(0, 255, 0), 2, 8, false);
@@ -55,15 +64,17 @@ void DisplayInfo(const Mat image, Rect viewWindow, Stroke stroke, char & color, 
 
 	Vec4f differ = targetCMYK - CMYK;
 
-	//printf(" Color Detection\n");
-	//printf(" Target: (%d,%d,%d)\n", (int)targetCMYK[0], (int)targetCMYK[1], (int)targetCMYK[2]);
-	//printf(" Detect: (%d,%d,%d)\n", (int)CMYK[0], (int)CMYK[1], (int)CMYK[2]);
-	//printf(" Differ: (%d,%d,%d)\n\n", (int)differ[0], (int)differ[1], (int)differ[2]);
+	if (mode_display == 0){
+		printf("\n\n Color Detection\n");
+		printf(" Target: (%d,%d,%d,%d)\n", (int)targetCMYK[0], (int)targetCMYK[1], (int)targetCMYK[2], (int)targetCMYK[3]);
+		printf(" Detect: (%d,%d,%d,%d)\n", (int)CMYK[0], (int)CMYK[1], (int)CMYK[2], (int)CMYK[3]);
+		printf(" Differ: (%d,%d,%d,%d)\n\n", (int)differ[0], (int)differ[1], (int)differ[2], (int)differ[3]);
+	}
 
 	// Decide initial Color
 	int colorToDraw = 0;
 	float maxDiffer = 0;
-	
+
 	for (int i = 0; i < 4; i++){
 		if (abs(int(differ[i]))>maxDiffer){
 			if (int(differ[i]) > 0){
@@ -76,32 +87,32 @@ void DisplayInfo(const Mat image, Rect viewWindow, Stroke stroke, char & color, 
 		}
 	}
 
-	level = (int)maxDiffer;
+	level = round(maxDiffer);
 
-	if (maxDiffer<5)
+	if (maxDiffer<10)
 		colorToDraw = 4;
 
 	switch (colorToDraw){
-		case 0:
-			printf("\n Draw: Cyan %d", level);
-			color = 'C';
-			break;
-		case 1:
-			printf("\n Draw: Magenta %d", level);
-			color = 'M';
-			break;
-		case 2:
-			printf("\n Draw: Yellow %d", level);
-			color = 'Y';
-			break;
-		case 3:
-			printf("\n Draw: White %d", level);
-			color = 'K';
-			break;
-		case 4:
-			printf("\n Color mixing done!");
-			color = 'N';
-			break;
+	case 0:
+		printf(" Draw: Cyan %d", (int)level);
+		color = 'C';
+		break;
+	case 1:
+		printf(" Draw: Magenta %d", (int)level);
+		color = 'M';
+		break;
+	case 2:
+		printf(" Draw: Yellow %d", (int)level);
+		color = 'Y';
+		break;
+	case 3:
+		printf(" Draw: White %d", (int)level);
+		color = 'K';
+		break;
+	case 4:
+		printf(" Color mixing done!");
+		color = 'N';
+		break;
 	}
 	imshow("Capture", image);
 	cvWaitKey(33);

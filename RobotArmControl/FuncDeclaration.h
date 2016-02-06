@@ -15,7 +15,7 @@ void CannyDetection(Mat src, Mat &canny);
 void StrokesGeneration(const Mat img, Mat & canvas, const vector<pair <Point, float>> drawPoints, const Mat edgeMap, const Mat angles, float iteration);
 
 // Camera Control
-void DisplayInfo(const Mat image, Rect viewWindow, Stroke stroke, char & color, int & level);
+void DisplayInfo(const Mat image, Rect viewWindow, Stroke stroke, char & color, float & level, Vec4f & CMYK);
 
 // Utility
 string outputFileName(string file_name, int index, string type);
@@ -23,3 +23,5 @@ float BilinearInterplation(float x, float y);
 void ShowImg(string window_name, Mat img, int time = 0);
 bool ColorDifferenceCompare(pair <Point, float> c1, pair <Point, float> c2);
 void rgb2cmyk(const Vec3b bgr, Vec4f & cmyk);
+string int2str(int &i);
+vector<string> split(string, char);

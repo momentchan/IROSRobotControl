@@ -39,3 +39,12 @@ bool CompareLength(vector<Point> contour1, vector<Point> contour2) {
 	double j = arcLength(contour2, false);
 	return (i > j);
 }
+vector<string> split(string str, char delimiter) {
+	vector<string> internal;
+	stringstream ss(str); // Turn the string into a stream.
+	string tok;
+	while (getline(ss, tok, delimiter)) {
+		internal.push_back(tok);
+	}
+	return internal;
+}
