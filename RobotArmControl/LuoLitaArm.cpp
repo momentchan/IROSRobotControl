@@ -1,17 +1,13 @@
 #include "LuoLitaArm.h"
 #include "FuncDeclaration.h"
-
 using namespace std;
 using namespace Eigen;
-
-//-----------------------------
-//------Global Variable--------
-//-----------------------------
 extern int mode_display;
-
+// Global variable
 // Timer
 void RTFCNDCL TimerHandler1(void * nContext);
 vector<StrokeCluster> firstDrawStrokes;
+vector<StrokeCluster> StrokeClusters;
 
 // Camera
 VideoCapture captureDevice;
@@ -24,13 +20,20 @@ int picture_id = 0;
 int corner_x = 261, corner_y = 71, w = 283, h = 283;
 int view_id = 0;
 Rect viewWindow;
-Rect canvasView = Rect(259, 81, 306, 306); 
+Rect canvasView = Rect(259, 81, 306, 306);
 Rect drawView = Rect(283, 344, 25, 25); // short: Rect(301, 381, 25, 25); 
+
+// Visual Feedback 
+float iter = 0;
+Mat targetImg = imread("apple.jpg");
+Mat edgeMap, angles;
+
 
 // Mix
 Vec4f CMYK;
 Stroke stroke;
-int stroke_num = 0;
+int cluster_num = 0;
+int cluster_id = 0;
 int stroke_id = 0;
 int mix_times = 2;
 char mix_color;
@@ -63,31 +66,18 @@ float imageSize = 400;
 
 // Other
 Finger finger;
-char DrawMode = 'c'; // c: capture only   m: mix   d: draw
+char DrawMode = 'f'; // c: capture only   m: mix   d: draw
 bool loopDone = false;
-
-// Function
-void initFinger(){
-	//Initial finger pose
-	finger.init();
-	finger.open();
-	finger.setMode('p');
-	finger.move(80);
-}
-void CreatRectangle(int, void*){
-	viewWindow = Rect(corner_x, corner_y, w, h);
-}
+bool firstStroke = true;
 static void onMouse(int event, int x, int y, int f, void* userdata){
 	if (event == CV_EVENT_RBUTTONDOWN){
 		mousePosition.x = x;
 		mousePosition.y = y;
 	}
 }
-
-
 void KeyboardControl(){
-	string fileName;
 	switch (kbCmd){
+		// Speed Control
 		case '-':
 			if (speed>0.2) speed -= 0.1f;
 			setDefaultArmSpeed(speed);
@@ -96,6 +86,7 @@ void KeyboardControl(){
 			if (speed<1.2) speed += 0.1f;
 			setDefaultArmSpeed(speed);
 			break;
+		// Move Control
 		case 'a':
 			MoveRelative(step_move, 0, 0, 0, 0, 0);
 			break;
@@ -115,15 +106,16 @@ void KeyboardControl(){
 			MoveRelative(0, 0, -step_move, 0, 0, 0);
 			break;
 		case 'q':
+			cout << "\n Input step move \n";
 			cin >> step_move;
 			break;
+		// View Control
 		case 'o':
 			GoToPoint(0.5f, 0, 0, 0, 0, 0, 0);
-			captureDevice.set(CV_CAP_PROP_FOCUS, canvasFocus);
-			corner_x = canvasView.x, corner_y = canvasView.y, w = canvasView.width, h = canvasView.height;
-			viewWindow = Rect(corner_x, corner_y, w, h);
+			SetCamera("canvas");
 			break;
 		case 'v':
+			cout << "\n Input view color id \n";
 			cin >> view_id;
 			corner_x = drawView.x, corner_y = drawView.y, w = drawView.width, h = drawView.height;
 			if (view_id == 0){
@@ -139,38 +131,46 @@ void KeyboardControl(){
 				GoToPoint(pos_K.x, pos_K.y, pos_K.z, 0, 0, 0, 0);
 			}
 			break;
-		case 'c':
-			fileName = outputFileName("Image/take", picture_id, ".jpg");
-			imwrite(fileName, detectImg);
-			picture_id++;
-			break;
-		case 'm':		// change mode
-			cin >> DrawMode;
-			break;
+		// Finger Control
 		case 'n':
 			finger.move(80);
 			break;
-		case '2':
-			stroke = firstDrawStrokes[0].getStroke(stroke_id);
-			DrawStroke(stroke);
-			stroke_id++;
+		// Camera Control
+		case 'c': {
+			string fileName = outputFileName("Image/take", picture_id, ".jpg");
+			imwrite(fileName, detectImg);
+			picture_id++;
 			break;
-		case '/':
-			cout << captureDevice.get(CV_CAP_PROP_FOCUS);
+		}
+		case 'p':
+			cout << "Camera focus on: " << captureDevice.get(CV_CAP_PROP_FOCUS) << endl;
 			PAUSE
 			break;
-
+		case 'm':		// change mode
+			cout << "\n Input drawing mode \n";
+			cin >> DrawMode;
+			break;
+		
 	}
 	kbCmd = ' ';
 }
+Mat largeCanvas;
 void ModeTransition(){
 	switch (DrawMode){
+		// Camera View Mode
+		case 'c':
+			captureDevice >> detectImg;
+			namedWindow("Rectangle");
+			createTrackbar("X", "Rectangle", &corner_x, 640, CreatRectangle);
+			createTrackbar("Y", "Rectangle", &corner_y, 480, CreatRectangle);
+			createTrackbar("W", "Rectangle", &w, 640, CreatRectangle);
+			createTrackbar("H", "Rectangle", &h, 480, CreatRectangle);
+			CreatRectangle(0, 0);
+			DisplayInfo(detectImg, viewWindow, stroke, mix_color, level, CMYK);
+			break;
+		// Mix color Mode
 		case 'm':
-			captureDevice.set(CV_CAP_PROP_FOCUS, drawFocus);
-			corner_x = drawView.x, corner_y = drawView.y, w = drawView.width, h = drawView.height;
-			viewWindow = Rect(corner_x, corner_y, w, h);
-			destroyWindow("Rectangle");
-			
+			SetCamera("draw");
 			// Go to mix position to check color
 			pos_mix.x -= mix_id * mix_dx;
 			GoToPoint(pos_mix.x + view_dx, pos_mix.y, pos_mix.z, 0, 0, 0, 0);
@@ -183,11 +183,14 @@ void ModeTransition(){
 				float dip_z = (1.0 + level / 100.0) * dip_depth;
 
 				if (mix_color == 'N'){
-					DrawMode = 'c';
+					if (firstStroke)
+						DrawMode = 'd';
+					else
+						DrawMode = 'f';
 					break;
 				}
 				else{
-					// Go to upper
+					// Go to upper of color 
 					if		(mix_color == 'C')	GoToPoint(pos_C.x, pos_C.y, pos_C.z, 0, 0, 0, 0);	
 					else if (mix_color == 'M')	GoToPoint(pos_M.x, pos_M.y, pos_M.z, 0, 0, 0, 0);
 					else if (mix_color == 'Y')	GoToPoint(pos_Y.x, pos_Y.y, pos_Y.z, 0, 0, 0, 0);
@@ -204,110 +207,106 @@ void ModeTransition(){
 					DrawMode = 'c';
 					break;
 				}
-				Sleep(33);
+				//Sleep(33);
 			}
-		break;
-		case 'c':
-			captureDevice >> detectImg;
-			namedWindow("Rectangle");
-			createTrackbar("X", "Rectangle", &corner_x, 640, CreatRectangle);
-			createTrackbar("Y", "Rectangle", &corner_y, 480, CreatRectangle);
-			createTrackbar("W", "Rectangle", &w, 640, CreatRectangle);
-			createTrackbar("H", "Rectangle", &h, 480, CreatRectangle);
-			CreatRectangle(0, 0);
-			DisplayInfo(detectImg, viewWindow, stroke, mix_color, level, CMYK);
 			break;
+		// Draw First Layer Mode
 		case 'd':
-			captureDevice.set(CV_CAP_PROP_FOCUS, drawFocus);
-			corner_x = drawView.x, corner_y = drawView.y, w = drawView.width, h = drawView.height;
-			viewWindow = Rect(corner_x, corner_y, w, h);
-			destroyWindow("Rectangle");
+			SetCamera("draw");
+			if (stroke_id < firstDrawStrokes[cluster_id].getNum()){
+				stroke = firstDrawStrokes[cluster_id].getStroke(stroke_id);
+				// Draw stroke
+				if (DrawStroke(stroke)){
+					captureDevice >> detectImg;
+					DisplayInfo(detectImg, viewWindow, stroke, mix_color, level, CMYK);
+					if (mix_color != 'N')
+						DrawMode = 'm';
+				}
+				stroke_id++;
+			}
+			else{
+				cluster_id++;
+				if (cluster_id < cluster_num){
+					stroke_id = 0;
+					stroke = firstDrawStrokes[cluster_id].getStroke(stroke_id);
 
-			// Go to mix position to check color
-			pos_mix.x -= mix_id * mix_dx;
-			GoToPoint(pos_mix.x + view_dx, pos_mix.y, pos_mix.z, 0, 0, 0, 0);
-
-			while (true){
-				system("cls");
-				DisplayLoop();
-				captureDevice >> detectImg;
-				DisplayInfo(detectImg, viewWindow, stroke, mix_color, level, CMYK);
-				float dip_z = (1.0 + level / 100.0) * dip_depth;
-
-				if (mix_color == 'N'){
-					DrawMode = 'c';
-					break;
+					if (DrawStroke(stroke)){
+						captureDevice >> detectImg;
+						DisplayInfo(detectImg, viewWindow, stroke, mix_color, level, CMYK);
+						if (mix_color != 'N')
+							DrawMode = 'm';
+					}
+					stroke_id++;
 				}
 				else{
-					// Go to upper
-					if (mix_color == 'C')	GoToPoint(pos_C.x, pos_C.y, pos_C.z, 0, 0, 0, 0);
-					else if (mix_color == 'M')	GoToPoint(pos_M.x, pos_M.y, pos_M.z, 0, 0, 0, 0);
-					else if (mix_color == 'Y')	GoToPoint(pos_Y.x, pos_Y.y, pos_Y.z, 0, 0, 0, 0);
-					else if (mix_color == 'K')	GoToPoint(pos_K.x, pos_K.y, pos_K.z, 0, 0, 0, 0);
-					// Dip color
-					DipColor(dip_z);
-					GoToPoint(pos_mix.x, pos_mix.y, pos_mix.z, 0, 0, 0, 0);
-					// Mix color
-					MixColor(mix_times);
-					GoToPoint(pos_mix.x + view_dx, pos_mix.y, pos_mix.z, 0, 0, 0, 0);
-				}
-				if (_kbhit()) kbCmd = _getche();
-				if (kbCmd == kb_ESC) {
+					cout << endl <<  "First Layer stroke finished." << endl;
+					Sleep(1000); 
 					DrawMode = 'c';
-					break;
+					firstStroke = false;
 				}
-				Sleep(33);
 			}
 			break;
-		case 'f':
-			captureDevice.set(CV_CAP_PROP_FOCUS, canvasFocus);
-			corner_x = canvasView.x, corner_y = canvasView.y, w = canvasView.width, h = canvasView.height;
-			viewWindow = Rect(corner_x, corner_y, w, h);
-			destroyWindow("Rectangle");
-
-			// Go to mix position to check color
-			pos_mix.x -= mix_id * mix_dx;
-			GoToPoint(pos_mix.x + view_dx, pos_mix.y, pos_mix.z, 0, 0, 0, 0);
-
-			while (true){
-				system("cls");
-				DisplayLoop();
-				captureDevice >> detectImg;
-				DisplayInfo(detectImg, viewWindow, stroke, mix_color, level, CMYK);
-				float dip_z = (1.0 + level / 100.0) * dip_depth;
-
-				if (mix_color == 'N'){
-					DrawMode = 'c';
-					break;
+		// Visual Feedback Mode
+		case 'f':{
+			if (iter < ITERATION){
+				GoToPoint(0.5f, 0, 0, 0, 0, 0, 0);
+				SetCamera("canvas");
+				if (iter == 0){
+					captureDevice >> detectImg;
+					detectImg.copyTo(largeCanvas);
 				}
-				else{
-					// Go to upper
-					if (mix_color == 'C')	GoToPoint(pos_C.x, pos_C.y, pos_C.z, 0, 0, 0, 0);
-					else if (mix_color == 'M')	GoToPoint(pos_M.x, pos_M.y, pos_M.z, 0, 0, 0, 0);
-					else if (mix_color == 'Y')	GoToPoint(pos_Y.x, pos_Y.y, pos_Y.z, 0, 0, 0, 0);
-					else if (mix_color == 'K')	GoToPoint(pos_K.x, pos_K.y, pos_K.z, 0, 0, 0, 0);
-					// Dip color
-					DipColor(dip_z);
-					GoToPoint(pos_mix.x, pos_mix.y, pos_mix.z, 0, 0, 0, 0);
-					// Mix color
-					MixColor(mix_times);
-					GoToPoint(pos_mix.x + view_dx, pos_mix.y, pos_mix.z, 0, 0, 0, 0);
+				else
+					largeCanvas.copyTo(detectImg);
+				Mat canvas = detectImg(Rect(corner_x, corner_y, w, h));
+				resize(canvas, canvas, Size(imageSize, imageSize));
+				if (iter == 0){
+					for (int c = 0; c < firstDrawStrokes.size(); c++){
+						int strokeNum = firstDrawStrokes[c].getNum();
+						Vec4f CMYK = firstDrawStrokes[c].getColor();
+						for (int s = 0; s < strokeNum; s++){
+							firstDrawStrokes[c].getStroke(s).drawOnCanvas(canvas);
+							Mat resizeCanvas;
+							resize(canvas, resizeCanvas, Size(w, h));
+							resizeCanvas.copyTo(largeCanvas(Rect(corner_x, corner_y, w, h)));
+							imshow("Simulation", largeCanvas);
+							waitKey(10);
+						}
+					}
 				}
-				if (_kbhit()) kbCmd = _getche();
-				if (kbCmd == kb_ESC) {
-					DrawMode = 'c';
-					break;
+
+
+				vector<pair <Point, float>> drawPoints;
+				colorDiffer(targetImg, canvas, drawPoints, iter);
+
+				// Generate Strokes
+				StrokeClusters = StrokesGeneration(targetImg, canvas, drawPoints, edgeMap, angles, iter);
+#if SIMULATION
+				// Draw on canvas
+				printf("Drawing iteration : %d \n", (int)iter);
+				for (int c = 0; c < StrokeClusters.size(); c++){
+					int strokeNum = StrokeClusters[c].getNum();
+					Vec4f CMYK = StrokeClusters[c].getColor();
+					//printf("  # of stroke in cluster %d : %d   (%d, %d, %d, %d) %d \n",
+					//	c, strokeNum, (int)CMYK[0], (int)CMYK[1], (int)CMYK[2], (int)CMYK[3], StrokeClusters[c].getMaxInfo().first);
+					for (int s = 0; s < strokeNum; s++){
+						StrokeClusters[c].getStroke(s).drawOnCanvas(canvas, edgeMap);
+						Mat resizeCanvas;
+						resize(canvas, resizeCanvas, Size(w, h));
+						resizeCanvas.copyTo(largeCanvas(Rect(corner_x, corner_y, w, h)));
+						imshow("Simulation", largeCanvas);
+						waitKey(10);
+					}
 				}
-				Sleep(33);
+#endif
 			}
 			break;
+		}
 		case 'b':
 			finger.close();
 			break;
 		case 'n':
 			finger.move(80);
 			break;
-
 	}
 	kbCmd = ' ';
 }
@@ -315,7 +314,7 @@ void ModeTransition(){
 int main(int argc, char **argv, char **envp)
 {
 	// Read first draw strokes
-	firstDrawStrokes = readFirstStroke(stroke_num, picture_id);
+	firstDrawStrokes = readFirstStroke(cluster_num, picture_id);
 #if ROBOT_ON
 	init_LuoLita_1();
 	LitaHand.GripperMove_Abs_To(75.0f, 1);
@@ -338,6 +337,8 @@ int main(int argc, char **argv, char **envp)
 #endif
 	kbCmd = ' ';
 	mode_display = 0;
+	
+	EMapConstruct(targetImg, edgeMap, angles);
 
 	// Initialize Camera
 	captureDevice.open(0);
@@ -349,7 +350,6 @@ int main(int argc, char **argv, char **envp)
 	//initFinger();
 
 	stroke = firstDrawStrokes[0].getStroke(0);
-	
 	while (!loopDone)
 	{
 		// Get keyboard command
@@ -358,8 +358,7 @@ int main(int argc, char **argv, char **envp)
 
 		system("cls");
 		DisplayLoop();
-		cout << endl << "  Moving speed: " << speed << "   ";
-		cout << "Drawing Mode = " << DrawMode << endl;
+		printf("\n  Moving speed: %.2f	 Drawing Mode: %c \n ", speed, DrawMode);
 		setMouseCallback("Capture", onMouse, 0);
 		KeyboardControl();
 		ModeTransition();

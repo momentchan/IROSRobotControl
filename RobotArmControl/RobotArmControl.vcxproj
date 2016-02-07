@@ -85,6 +85,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CameraControl.cpp" />
+    <ClCompile Include="ColorFeedback.cpp" />
     <ClCompile Include="ControlLita.cpp" />
     <ClCompile Include="DataStructure.cpp" />
     <ClCompile Include="finger.cpp" />
@@ -95,6 +96,7 @@
     <ClCompile Include="RobotControl.cpp" />
     <ClCompile Include="RobotLita.cpp" />
     <ClCompile Include="SerialPortCom.cpp" />
+    <ClCompile Include="StrokesGeneration.cpp" />
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,8 @@
 #include "FuncDeclaration.h"
 
+
+
+
 string int2str(int &i) {
 	string s;
 	stringstream ss(s);
@@ -10,6 +13,17 @@ string outputFileName(string file_name, int index, string type){
 	file_name.append(int2str(index));
 	file_name.append(type);
 	return file_name;
+}
+void ShowImg(string window_name, Mat img, int time){
+	
+	if (time != 0 && time != -1){
+		imshow(window_name, img);
+		waitKey(time);
+	}
+	else if (time == 0){
+		imshow(window_name, img);
+		waitKey(0);
+	}
 }
 void rgb2cmyk(const Vec3b bgr, Vec4f & cmyk) {
 	int B = bgr.val[0];
@@ -24,10 +38,6 @@ void rgb2cmyk(const Vec3b bgr, Vec4f & cmyk) {
 	cmyk[1] = (1 - g - k) / (1 - k) * 255.;
 	cmyk[2] = (1 - b - k) / (1 - k) * 255.;
 	cmyk[3] = k * 255.;
-}
-void ShowImg(string window_name, Mat img){
-	imshow(window_name, img);
-	waitKey(0);
 }
 bool ColorDifferenceCompare(pair <Point, float> c1, pair <Point, float> c2) {
 	float i = c1.second;

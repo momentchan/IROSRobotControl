@@ -1,11 +1,12 @@
 #include <iostream>
+#include <windows.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
+#include <cstdio>
+#include <string>
 #include <sstream>
 #include <fstream>
-#include <string>
-#include <windows.h>
 #include <opencv2/objdetect/objdetect.hpp>
 #include <opencv2/objdetect/objdetect_c.h>
 #include <opencv2/highgui/highgui.hpp>
@@ -23,7 +24,7 @@ using namespace Eigen;
 using namespace std;
 using namespace cv;
 
-#define DRAWTHRESH 20// 20 for mean 50 for max 
+#define DRAWTHRESH 30// 20 for mean 50 for max 
 #define CLUSTTHRESH 5
 #define ITERATION 3
 #define SAMPLEFREQ 50
@@ -36,6 +37,7 @@ using namespace cv;
 #define CANNY 1
 #define ROBOT_ON 1
 #define pi_f 3.14159
+#define MIN_DISTANCE 1.0
 
 // Data Structure
 class Stroke{
