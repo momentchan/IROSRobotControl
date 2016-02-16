@@ -23,7 +23,7 @@ vector<StrokeCluster> readFirstStroke(int & cluster_num, int &picture_id);
 void MoveRelative(float x, float y, float z, float r, float p, float yaw);
 void GoToPoint(float x, float y, float z, float theta_roll, float theta_pitch, float theta_yaw, float theta_arm);
 void DipColor(float d);
-void MixColor(int mix_times);
+void MixColor(float d, int mix_times);
 bool DrawStroke(Stroke stroke);
 void CreatRectangle(int, void*);
 void SetCamera(string c);

@@ -83,10 +83,15 @@ void DisplayInfo(const Mat image, Rect viewWindow, Stroke &stroke, char & color,
 			maxDiffer = abs(int(differ[i]));
 		}
 	}
+	//// K
+	//if (int(differ[3]) < 0 && abs(int(differ[3]))>maxDiffer){
+	//	maxDiffer = abs(int(differ[3]));
+	//	colorToDraw = 3;
+	//}
 
 	level = round(maxDiffer);
 
-	if (maxDiffer<10)
+	if (maxDiffer<15)
 		colorToDraw = 4;
 
 	switch (colorToDraw){

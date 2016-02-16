@@ -41,7 +41,7 @@ extern Point2f canvas_center;
 extern Point mousePosition;
 extern Vector6f t;
 extern Matrix4f T;
-
+extern float mix_d;
 // Move
 extern float speed;
 extern float step_move;
@@ -52,7 +52,6 @@ extern float imageSize;
 // Other
 extern Finger finger;
 extern char DrawMode;
-extern bool loopDone;
 extern bool firstStroke;
 
 void idleDisplay(){
@@ -114,17 +113,16 @@ void DipColor(float d){
 	MoveRelative(0, 0, -d, 0, 0, 0);
 	MoveRelative(0, 0, d, 0, 0, 0);
 }
-void MixColor(int mix_times){
-	float d = 0.012;
+void MixColor(float d, int mix_times){
 	MoveRelative(0, 0, -d, 0, 0, 0);
-
-	MoveRelative(0, 0.005, 0, 0, 0, 0);
+	
+	MoveRelative(0, mix_d, 0, 0, 0, 0);
 
 	for (int i = 0; i < mix_times; i++){
-		MoveRelative(0, -0.01, 0, 0, 0, 0);
-		MoveRelative(0, 0.01, 0, 0, 0, 0);
+		MoveRelative(0, -2 * mix_d, 0, 0, 0, 0);
+		MoveRelative(0, 2 * mix_d, 0, 0, 0, 0);
 	}
-	MoveRelative(0, -0.005, 0, 0, 0, 0);
+	MoveRelative(0, -2 * mix_d, 0, 0, 0, 0);
 }
 vector<StrokeCluster> readFirstStroke(int & cluster_num, int &picture_id){
 	//count how many files in drawPoints directory
@@ -173,6 +171,7 @@ vector<StrokeCluster> readFirstStroke(int & cluster_num, int &picture_id){
 	}
 	return firstDrawStrokes;
 }
+float dx = -0.001; float dz = 0.023;
 bool DrawStroke(Stroke stroke){
 	float scale = paperSize / imageSize / 100.0;
 	float y1 = (-1) * (stroke.getPoint(0).x - 200.0) * scale + canvas_center.y;
@@ -180,10 +179,12 @@ bool DrawStroke(Stroke stroke){
 	float x1 = (-1) * (stroke.getPoint(0).y - 200.0) * scale + canvas_center.x;
 	float x2 = (-1) * (stroke.getPoint(1).y - 200.0) * scale + canvas_center.x;
 	float distance = cv::norm(Point2f(x1, y1) - Point2f(x2, y2))*100; //cm
-	if (distance > MIN_DISTANCE){
-		GoToPoint(x1, y1, board_touch + view_dz, 0, 0, 0, 0);
+	if (true){
+	//if (distance > MIN_DISTANCE){
+		GoToPoint(x1, y1, board_touch + dz, 0, 0, 0, 0);
 		GoToPoint(x1, y1, board_touch, 0, 0, 0, 0);
 		GoToPoint(x2, y2, board_touch, 0, 0, 0, 0);
+		GoToPoint(x2 + dx, y2, board_touch + dz, 0, 0, 0, 0);
 		return true;
 	}
 	else

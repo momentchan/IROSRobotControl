@@ -32,7 +32,7 @@ using namespace cv;
 #define MEANSHIFT 1
 #define EDGECLIPING 1
 #define PI 3.14159
-#define DISPLAY 0
+#define DISPLAY 1
 #define SIMULATION 1
 #define CANNY 1
 #define ROBOT_ON 1
