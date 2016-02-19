@@ -28,17 +28,18 @@ using namespace cv;
 #define CLUSTTHRESH 5
 #define ITERATION 3
 #define SAMPLEFREQ 50
-#define PAUSE fgetc(stdin);
+#define PAUSE system("Pause");//fgetc(stdin);
 #define MEANSHIFT 1
 #define EDGECLIPING 1
+#define TOLERANCE 15.0
 #define PI 3.14159
-#define DISPLAY 1
-#define SIMULATION 1
+#define DISPLAY 0
+#define SIMULATION 0
 #define CANNY 1
 #define ROBOT_ON 1
 #define pi_f 3.14159
-#define MIN_DISTANCE 1.0
-
+#define MIN_DISTANCE 0.5
+#define DIFFERTHRESH 20
 // Data Structure
 class Stroke{
 public:
@@ -72,11 +73,12 @@ public:
 	StrokeCluster(){ avgCMYK = Vec4f(0, 0, 0, 0); pointNum = 0;  maxInfo = make_pair(0, 0); }
 	void addStroke(Stroke drawStroke);
 	float computeDiffer(Vec4f cmyk);
-	Stroke getStroke(int index){ return drawStrokes[index]; }
+	Stroke & getStroke(int index){ return drawStrokes[index]; }
 	int getNum(){ return pointNum; }
 	Vec4f getColor(){ return avgCMYK; }
 	void showMaxInfo(){ cout << maxInfo.first << " " << maxInfo.second << endl; }
 	pair<int, double> getMaxInfo(){ return maxInfo; }
+	int getClusterID();
 private:
 	vector<Stroke> drawStrokes;
 	Vec4f avgCMYK;

@@ -53,17 +53,30 @@ void EMapConstruct(Mat img, Mat & edgeMap, Mat & angles){
 	imwrite("Image/Orientation.jpg", orientation);
 	imwrite("Image/EdgeMap.jpg", edgeMap);
 }
+
 bool ColorSort(StrokeCluster c1, StrokeCluster c2){
+	int t1 = c1.getClusterID();
+	int t2 = c2.getClusterID();
+	if (t1 < t2)
+		return true;
+	else if (t1 > t2)
+		return false;
+
  	pair <int, double> p1 = c1.getMaxInfo();
 	pair <int, double> p2 = c2.getMaxInfo();
-	if (p1.first < p2.first)
-		return true;
-	if (p1.first > p2.first)
+	if (t1 != 0){
+		/*if (p1.second > p2.second)
+			return true;
+		return false;*/
+		if (c1.getColor()[3] < c2.getColor()[3])
+			return true;
 		return false;
-	if (p1.second > p2.second)
-		return true;
-	if (p1.second < p2.second)
+	}
+	else{
+		if (c1.getColor()[3] < c2.getColor()[3])
+			return true;
 		return false;
+	}
 	return false;
 }
 vector<StrokeCluster> StrokesGeneration(const Mat img, Mat & canvas, const vector<pair <Point, float>> drawPoints, const Mat edgeMap, const Mat angles, float iteration){
@@ -78,7 +91,7 @@ vector<StrokeCluster> StrokesGeneration(const Mat img, Mat & canvas, const vecto
 	Vec4f cmyk;
 	rgb2cmyk(rgb, cmyk);
 	float angle = angles.at<float>(y, x) + PI / 2;
-	StrokeClusters[0].addStroke(Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 10.0));
+	StrokeClusters[0].addStroke(Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 20.0));
 
 
 	// Color clustering
@@ -97,7 +110,7 @@ vector<StrokeCluster> StrokesGeneration(const Mat img, Mat & canvas, const vecto
 				bestIndex = c;
 				minDiffer = colorDiffer;
 				float angle = angles.at<float>(y, x) + PI / 2;
-				stroke = Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 10.0);
+				stroke = Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 20.0);
 			}
 		}
 		// Add into cluster

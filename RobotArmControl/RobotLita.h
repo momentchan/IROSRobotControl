@@ -114,7 +114,7 @@ Eigen::Matrix4f delta2tr( const Vector6f& d , const Eigen::Matrix4f& T0 );
 Vector6f tr2x( const Eigen::Matrix4f& T );
 
 Eigen::Matrix4f tr07( const Vector7f& q );
-
+ 
 Matrix67f jacob0( const Vector7f& q );
 
 //Matrix76f invjacob0( const Vector7f& q );

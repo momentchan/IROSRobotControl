@@ -110,3 +110,41 @@ float StrokeCluster::computeDiffer(Vec4f cmyk){
 	float differMean = mean(differ)[0];
 	return differMean;
 }
+int StrokeCluster::getClusterID(){
+	int t = 30;
+	if (avgCMYK[3] > 60)
+		return 7;
+	// 000
+	if (avgCMYK[0] < t && avgCMYK[1] < t  && avgCMYK[2] < t){
+		return 0;
+	}
+	// 100
+	else if (avgCMYK[0] > t && avgCMYK[1] < t  && avgCMYK[2] < t){
+		return 1;
+	}
+	// 110
+	else if (avgCMYK[0] > t && avgCMYK[1] > t  && avgCMYK[2] < t){
+		return 2;
+	}
+	// 101
+	else if (avgCMYK[0] > t && avgCMYK[1] < t  && avgCMYK[2] > t){
+		return 3;
+	}
+	// 010
+	else if (avgCMYK[0] < t && avgCMYK[1] > t  && avgCMYK[2] < t){
+		return 4;
+	}
+	// 011
+	else if (avgCMYK[0] < t && avgCMYK[1] > t  && avgCMYK[2] > t){
+		return 5;
+	}
+	// 001
+	else if (avgCMYK[0] < t && avgCMYK[1] < t  && avgCMYK[2] > t){
+		return 6;
+	}
+	// 111
+	else if (avgCMYK[0] > t && avgCMYK[1] > t  && avgCMYK[2] > t){
+		return 7;
+	}
+	return 7;
+}

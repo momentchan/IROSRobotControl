@@ -15,7 +15,7 @@ void CannyDetection(Mat src, Mat &canny);
 vector<StrokeCluster> StrokesGeneration(const Mat img, Mat & canvas, const vector<pair <Point, float>> drawPoints, const Mat edgeMap, const Mat angles, float iteration);
 
 // Camera Control
-void DisplayInfo(const Mat image, Rect viewWindow, Stroke & stroke, char & color, float & level, Vec4f & CMYK);
+void VisualFeedback(const Mat image, Rect viewWindow, Stroke & stroke, char & color, float & level, Vec4f & CMYK);
 
 // Robot Control
 void setDefaultArmSpeed(float percentage = 1.0f);

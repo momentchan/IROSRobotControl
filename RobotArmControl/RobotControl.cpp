@@ -58,6 +58,10 @@ void idleDisplay(){
 	while (MOVL){
 		if (_kbhit())
 			kbCmd = _getche();
+		if (kbCmd == kb_ESC) {
+			DrawMode = 'c';
+		}
+
 		system("cls");
 		DisplayLoop();
 		if (mix_color == 'C')
@@ -171,7 +175,7 @@ vector<StrokeCluster> readFirstStroke(int & cluster_num, int &picture_id){
 	}
 	return firstDrawStrokes;
 }
-float dx = -0.001; float dz = 0.023;
+float dx = -0.0055; float dy = 0.002; float dz = 0.0095; float dt = 0.0004;
 bool DrawStroke(Stroke stroke){
 	float scale = paperSize / imageSize / 100.0;
 	float y1 = (-1) * (stroke.getPoint(0).x - 200.0) * scale + canvas_center.y;
@@ -179,12 +183,27 @@ bool DrawStroke(Stroke stroke){
 	float x1 = (-1) * (stroke.getPoint(0).y - 200.0) * scale + canvas_center.x;
 	float x2 = (-1) * (stroke.getPoint(1).y - 200.0) * scale + canvas_center.x;
 	float distance = cv::norm(Point2f(x1, y1) - Point2f(x2, y2))*100; //cm
-	if (true){
-	//if (distance > MIN_DISTANCE){
+	
+	//if (true){
+	if (DrawMode == 'f'){
+		GoToPoint(x1, y1, board_touch + dz, 0, 0, 0, 0);
+		GoToPoint(x1, y1, board_touch + dt, 0, 0, 0, 0);
+		GoToPoint(x2, y2, board_touch + dt, 0, 0, 0, 0);
+		if (y2 - y1 > 0)
+			GoToPoint(x2 + dx, y2 - dy, board_touch + dz, 0, 0, 0, 0); 
+		else
+			GoToPoint(x2 + dx, y2 + dy, board_touch + dz, 0, 0, 0, 0);
+		return true;
+	}
+	if (distance > MIN_DISTANCE){
 		GoToPoint(x1, y1, board_touch + dz, 0, 0, 0, 0);
 		GoToPoint(x1, y1, board_touch, 0, 0, 0, 0);
 		GoToPoint(x2, y2, board_touch, 0, 0, 0, 0);
 		GoToPoint(x2 + dx, y2, board_touch + dz, 0, 0, 0, 0);
+		if (y2 - y1 > 0)
+			GoToPoint(x2 + dx, y2 - dy, board_touch + dz, 0, 0, 0, 0);
+		else
+			GoToPoint(x2 + dx, y2 + dy, board_touch + dz, 0, 0, 0, 0);
 		return true;
 	}
 	else
