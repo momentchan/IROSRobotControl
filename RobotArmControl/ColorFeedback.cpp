@@ -1,4 +1,5 @@
 #include "FuncDeclaration.h"
+extern int totalnum;
 void nonMaximaSuppression(const Mat& src, const int sz, Mat& dst, const Mat mask) {
 
 	// initialise the block mask and destination
@@ -61,7 +62,7 @@ void colorDiffer(const Mat target, Mat detect, vector<pair <Point, float>> & dra
 			float differMean = mean(differ)[0];
 
 			differMap.at<uchar>(y, x) = (uchar)differMean;
-			if (differMean > DRAWTHRESH / iteration){
+			if (differMean > DRAWTHRESH){
 				circle(differImage, Point(x, y), 0, Scalar(0, 0, differMean));
 				//drawPoints.push_back(make_pair(Point(x, y), maxDiffer));
 			}
@@ -72,7 +73,7 @@ void colorDiffer(const Mat target, Mat detect, vector<pair <Point, float>> & dra
 	}
 
 	// Non maximun suppresion
-	Mat mask = (differMap > DRAWTHRESH / iteration);	// only look for local maxima above the value of 1
+	Mat mask = (differMap > DRAWTHRESH);	// only look for local maxima above the value of 1
 #if DISPLAY
 	ShowImg("differMap", differMap, 0);
 	ShowImg("Mask", mask, 0);
@@ -95,6 +96,7 @@ void colorDiffer(const Mat target, Mat detect, vector<pair <Point, float>> & dra
 	}
 	sort(drawPoints.begin(), drawPoints.end(), ColorDifferenceCompare);
 	cout << "Number of total draw points: " << drawPoints.size() << endl;
+	totalnum = drawPoints.size();
 #if DISPLAY
 	ShowImg("", differImage);
 	destroyAllWindows();

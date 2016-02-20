@@ -53,6 +53,7 @@ extern float imageSize;
 extern Finger finger;
 extern char DrawMode;
 extern bool firstStroke;
+extern vector<StrokeCluster> StrokeClusters;
 
 void idleDisplay(){
 	while (MOVL){
@@ -175,7 +176,7 @@ vector<StrokeCluster> readFirstStroke(int & cluster_num, int &picture_id){
 	}
 	return firstDrawStrokes;
 }
-float dx = -0.0055; float dy = 0.002; float dz = 0.0095; float dt = 0.0004;
+float dx = -0.0055; float dy = 0.002; float dz = 0.01; float dt = 0.0004;
 bool DrawStroke(Stroke stroke){
 	float scale = paperSize / imageSize / 100.0;
 	float y1 = (-1) * (stroke.getPoint(0).x - 200.0) * scale + canvas_center.y;

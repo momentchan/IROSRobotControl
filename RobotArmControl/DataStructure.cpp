@@ -111,11 +111,11 @@ float StrokeCluster::computeDiffer(Vec4f cmyk){
 	return differMean;
 }
 int StrokeCluster::getClusterID(){
-	int t = 30;
-	if (avgCMYK[3] > 60)
+	int t = 50;
+	if (avgCMYK[3] > 180)
 		return 7;
 	// 000
-	if (avgCMYK[0] < t && avgCMYK[1] < t  && avgCMYK[2] < t){
+	if (avgCMYK[0] < t && avgCMYK[1] < t  && avgCMYK[2] < t && avgCMYK[3] < 50){
 		return 0;
 	}
 	// 100

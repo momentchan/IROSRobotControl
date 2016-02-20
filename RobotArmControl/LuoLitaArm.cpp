@@ -20,12 +20,12 @@ int picture_id = 0;
 int corner_x = 321, corner_y = 93, w = 289, h = 289;
 int view_id = 0;
 Rect viewWindow;
-Rect canvasView = Rect(321, 122, 289, 289);//Rect(259, 81, 306, 306);
+Rect canvasView = Rect(321, 122, 305, 305);//Rect(259, 81, 306, 306);
 Rect drawView = Rect(300, 417, 25, 25);//Rect(283, 344, 25, 25); // short: Rect(301, 381, 25, 25); 
 
 // Visual Feedback 
 float iter = 0;
-Mat targetImg = imread("apple.jpg");
+Mat targetImg = imread("orange.jpg");
 Mat edgeMap, angles;
 
 
@@ -38,13 +38,13 @@ int stroke_id = 0;
 int mix_times = 2;
 char mix_color;
 int mix_id = 0;
-float mix_dx = 0.02;
+float mix_dx = 0.025;
 float mix_d = 0.008;
 float level = 0;
 
 // Position
-float board_touch = -0.121; //-0.138; // short: -0.19 long:-0.145  -0.111 -0.131
-float color_touch = -0.115;
+float board_touch = -0.122;//long -0.105;
+float color_touch = -0.115;//long -0.098;
 float dip_depth = 0.005;//0.005;
 float view_dx = -0.015; // short: -0.02
 float view_dz = 0.023;//0.015; //short: 0.01;
@@ -79,8 +79,9 @@ vector<Vec4f> mixHistory;
 Vec4f lastColor;
 
 int colorClass = 0;
-
 int strokeCount = 0;
+int totalnum = 0;
+int num = 0;
 
 extern float t1;
 static void onMouse(int event, int x, int y, int f, void* userdata){
@@ -217,7 +218,7 @@ void ModeTransition(){
 				float dip_z = (board_touch + view_dz - color_touch) + level / 100.0 * dip_depth;
 
 				// Mix white
-				if (CMYK[0] < t1 && CMYK[1] < t1 && CMYK[2] < t1 && CMYK[3] < t1){
+				if (stroke.getCMYK()[0] < 50 && stroke.getCMYK()[1] < 50 && stroke.getCMYK()[2] < 50 && stroke.getCMYK()[3] < 50){
 					GoToPoint(pos_W.x, pos_W.y, pos_W.z, 0, 0, 0, 0);
 					// Dip color
 					DipColor(dip_z);
@@ -311,7 +312,7 @@ void ModeTransition(){
 			if (iter < ITERATION){
 				// Generate Strokes
 				if (iterDone){
-					GoToPoint(0.5f, 0, 0, 0, 0, 0, 0);
+					//GoToPoint(0.5f, 0, 0, 0, 0, 0, 0);
 					SetCamera("canvas");
 #if SIMULATION
 					if (iter == 0){
@@ -380,8 +381,7 @@ void ModeTransition(){
 						int strokeNum = StrokeClusters[c].getNum();
 						Vec4f CMYK = StrokeClusters[c].getColor();
 						printf("  # of stroke in cluster %d : %d   (%d, %d, %d, %d) %d \n",
-							c, strokeNum, (int)CMYK[0], (int)CMYK[1], (int)CMYK[2], (int)CMYK[3], StrokeClusters[c].getMaxInfo().first);
-						PAUSE
+							c, strokeNum, (int)CMYK[0], (int)CMYK[1], (int)CMYK[2], (int)CMYK[3], StrokeClusters[c].getClusterID());
 						for (int s = 0; s < strokeNum; s++){
 							StrokeClusters[c].getStroke(s).drawOnCanvas(canvas, edgeMap);
 							Mat resizeCanvas;
@@ -390,6 +390,7 @@ void ModeTransition(){
 							imshow("Simulation", largeCanvas);
 							waitKey(10);
 						}
+						PAUSE
 					}
 					string filename = outputFileName("Image/Simulation", iter, ".jpg");
 					imwrite(filename, largeCanvas);
@@ -401,6 +402,7 @@ void ModeTransition(){
 
 				SetCamera("draw");
 				if (stroke_id < StrokeClusters[cluster_id].getNum()){
+					num++;
 					stroke = StrokeClusters[cluster_id].getStroke(stroke_id);
 					// First of all
 					if (!startF){
@@ -442,9 +444,11 @@ void ModeTransition(){
 						stroke_id = 0;
 						stroke = StrokeClusters[cluster_id].getStroke(stroke_id);
 						if (StrokeClusters[cluster_id].getClusterID() != colorClass){
-							cout << "Change Class!" << endl;
-							PAUSE
+							printf("Class %d is finished!\n", colorClass);
 							colorClass = StrokeClusters[cluster_id].getClusterID();
+							printf("Next Class is %d\n", colorClass);
+							DrawMode = 'c';
+							PAUSE
 						}
 
 						float minDiffer = INFINITE;
@@ -472,6 +476,7 @@ void ModeTransition(){
 						printf("\n Iteration %d is finished. \n ", iter);
 						iterDone = true;
 						PAUSE
+						DrawMode = 'c';
 					}
 #endif
 				}
@@ -544,6 +549,7 @@ int main(int argc, char **argv, char **envp)
 		system("cls");
 		DisplayLoop();
 		printf("\n  Moving speed: %.2f	 Drawing Mode: %c \n ", speed, DrawMode);
+		printf("\n %d / %d", num, totalnum);
 		setMouseCallback("Capture", onMouse, 0);
 		KeyboardControl();
 		ModeTransition();
