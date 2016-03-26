@@ -91,7 +91,10 @@ vector<StrokeCluster> StrokesGeneration(const Mat img, Mat & canvas, const vecto
 	Vec4f cmyk;
 	rgb2cmyk(rgb, cmyk);
 	float angle = angles.at<float>(y, x) + PI / 2;
-	StrokeClusters[0].addStroke(Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 20.0));
+	if (10.0 / iteration>5)
+		StrokeClusters[0].addStroke(Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 10.0));
+	else
+		StrokeClusters[0].addStroke(Stroke(rgb, cmyk, Point2f(x, y), 5, angle, 10.0));
 
 
 	// Color clustering
@@ -110,7 +113,10 @@ vector<StrokeCluster> StrokesGeneration(const Mat img, Mat & canvas, const vecto
 				bestIndex = c;
 				minDiffer = colorDiffer;
 				float angle = angles.at<float>(y, x) + PI / 2;
-				stroke = Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 20.0);
+				if (10.0 / iteration>5)
+					stroke = Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 10.0);
+				else
+					stroke = Stroke(rgb, cmyk, Point2f(x, y), 5, angle, 10.0);
 			}
 		}
 		// Add into cluster

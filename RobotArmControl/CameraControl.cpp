@@ -4,8 +4,10 @@ extern Mat targetImg;
 extern bool overlap;
 extern Rect canvasView;
 extern char DrawMode;
-float t1 = 20.0, t2 = 40.0;
+float t1 = 15.0, t2 = 20.0;
 int len = 5;
+int writeOutID = 0;
+extern bool show;
 void VisualFeedback(const Mat image, Rect viewWindow, Stroke &stroke, char & color, float & level, Vec4f & CMYK){
 
 	Vec3b targetRGB;
@@ -103,9 +105,10 @@ void VisualFeedback(const Mat image, Rect viewWindow, Stroke &stroke, char & col
 
 
 	// Draw marker
+	if (show){
 	line(image, Point(center.x - 10, center.y), Point(center.x + 10, center.y), Scalar(0, 0, 255));
 	line(image, Point(center.x, center.y - 10), Point(center.x, center.y + 10), Scalar(0, 0, 255));
-
+	}
 	
 	// Color Information
 	sprintf_s(name, "C=%d", (int)CMYK[0]);
@@ -135,8 +138,9 @@ void VisualFeedback(const Mat image, Rect viewWindow, Stroke &stroke, char & col
 
 	rectangle(image, Point(w - 2 * patch_size, 0), Point(w - patch_size, patch_size), totalRGB, -1, 8);
 	rectangle(image, Point(w - patch_size, 0), Point(w, patch_size), targetRGB, -1, 8);
-	rectangle(image, Point(viewWindow.x, viewWindow.y), Point(viewWindow.x + viewWindow.width, viewWindow.y + viewWindow.height), (255, 0, 0), 2);
-
+	if (show){
+		rectangle(image, Point(viewWindow.x, viewWindow.y), Point(viewWindow.x + viewWindow.width, viewWindow.y + viewWindow.height), (255, 0, 0), 2);
+	}
 	
 
 	printf("\n\n Color Detection\n");
@@ -178,10 +182,21 @@ void VisualFeedback(const Mat image, Rect viewWindow, Stroke &stroke, char & col
 		printf(" Draw: White %d", (int)level);
 		color = 'W';
 		break;
-	case 5:
+	case 5:{
+		writeOutID++;
+		Mat patch = Mat(Size(patch_size, patch_size), CV_8UC3);
+		patch.setTo(targetRGB);
+		string name = outputFileName("patch/target", writeOutID, ".jpg");
+		imwrite(name, patch);
+
+		patch.setTo(totalRGB);
+		name = outputFileName("patch/detect", writeOutID, ".jpg");
+		imwrite(name, patch);
+		
 		printf(" Color mixing done!");
 		color = 'N';
 		break;
+		}
 	}
 	imshow("Capture", image);
 	cvWaitKey(33);

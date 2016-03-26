@@ -24,9 +24,9 @@ using namespace Eigen;
 using namespace std;
 using namespace cv;
 
-#define DRAWTHRESH 30// 20 for mean 50 for max 
+#define DRAWTHRESH 20// 20 for mean 50 for max 
 #define CLUSTTHRESH 5
-#define ITERATION 3
+#define ITERATION 5
 #define SAMPLEFREQ 50
 #define PAUSE system("Pause");//fgetc(stdin);
 #define MEANSHIFT 1
@@ -39,7 +39,7 @@ using namespace cv;
 #define ROBOT_ON 1
 #define pi_f 3.14159
 #define MIN_DISTANCE 0.5
-#define DIFFERTHRESH 20
+#define DIFFERTHRESH 50
 // Data Structure
 class Stroke{
 public:

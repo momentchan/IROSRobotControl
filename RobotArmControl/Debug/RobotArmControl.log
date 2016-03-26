@@ -1,63 +1,41 @@
-﻿Build started 2016/2/20 下午 09:09:57.
+﻿Build started 2016/3/8 上午 06:16:56.
      1>Project "D:\MJ\IROSRobotControl\RobotArmControl\RobotArmControl.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\opencv\build\include /I"C:\Program Files\IntervalZero\RTX\\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt CameraControl.cpp DataStructure.cpp LuoLitaArm.cpp
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\opencv\build\include /I"C:\Program Files\IntervalZero\RTX\\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt LuoLitaArm.cpp
          LuoLitaArm.cpp
      1>c:\opencv\build\include\opencv2\core\mat.hpp(1965): warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
      1>c:\opencv\build\include\opencv2\core\persistence.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
      1>c:\opencv\build\include\opencv2\core\utility.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
      1>d:\mj\irosrobotcontrol\robotarmcontrol\main.h(53): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
      1>d:\mj\irosrobotcontrol\robotarmcontrol\main.h(56): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(41): warning C4305: 'initializing' : truncation from 'double' to 'float'
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(42): warning C4305: 'initializing' : truncation from 'double' to 'float'
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(46): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(43): warning C4305: 'initializing' : truncation from 'double' to 'float'
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(47): warning C4305: 'initializing' : truncation from 'double' to 'float'
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(48): warning C4305: 'initializing' : truncation from 'double' to 'float'
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(49): warning C4305: 'initializing' : truncation from 'double' to 'float'
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(50): warning C4305: 'initializing' : truncation from 'double' to 'float'
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(51): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(51): warning C4305: 'initializing' : truncation from 'double' to 'float'
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(52): warning C4305: 'argument' : truncation from 'double' to 'float'
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(53): warning C4305: 'argument' : truncation from 'double' to 'float'
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(54): warning C4305: 'argument' : truncation from 'double' to 'float'
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(55): warning C4305: 'argument' : truncation from 'double' to 'float'
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(56): warning C4305: 'argument' : truncation from 'double' to 'float'
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(57): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(176): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(177): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(178): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(179): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(180): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(58): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(180): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
      1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(181): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(218): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(368): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(380): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(395): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(454): warning C4305: 'initializing' : truncation from 'unsigned int' to 'float'
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(456): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(457): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-         DataStructure.cpp
-     1>c:\opencv\build\include\opencv2\core\mat.hpp(1965): warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
-     1>c:\opencv\build\include\opencv2\core\persistence.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
-     1>c:\opencv\build\include\opencv2\core\utility.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\main.h(53): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\main.h(56): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\datastructure.cpp(13): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\datastructure.cpp(27): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\datastructure.cpp(55): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\datastructure.cpp(87): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\datastructure.cpp(88): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\datastructure.cpp(89): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\datastructure.cpp(90): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\datastructure.cpp(110): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-         CameraControl.cpp
-     1>c:\opencv\build\include\opencv2\core\mat.hpp(1965): warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
-     1>c:\opencv\build\include\opencv2\core\persistence.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
-     1>c:\opencv\build\include\opencv2\core\utility.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (950). Save the file in Unicode format to prevent data loss
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\main.h(53): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\main.h(56): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\cameracontrol.cpp(58): warning C4305: 'initializing' : truncation from 'unsigned int' to 'float'
-     1>d:\mj\irosrobotcontrol\robotarmcontrol\cameracontrol.cpp(83): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
-         Generating Code...
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(182): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(183): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(184): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(185): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(186): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(228): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(385): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(397): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(412): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(478): warning C4305: 'initializing' : truncation from 'unsigned int' to 'float'
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(480): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\mj\irosrobotcontrol\robotarmcontrol\luolitaarm.cpp(481): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
        Link:
          C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\MJ\IROSRobotControl\Debug\RobotArmControl.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\opencv\build\x86\vc12\lib opencv_ts300d.lib opencv_world300d.lib IMCDriver.lib rtapi_w32.lib TcAdsDll.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libc /NODEFAULTLIB:libcd /NODEFAULTLIB:libcmt /NODEFAULTLIB:libcmtd /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\MJ\IROSRobotControl\Debug\RobotArmControl.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\MJ\IROSRobotControl\Debug\RobotArmControl.lib" /MACHINE:X86 Debug\CameraControl.obj
          Debug\ColorFeedback.obj
@@ -78,4 +56,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:05.99
+Time Elapsed 00:00:02.75

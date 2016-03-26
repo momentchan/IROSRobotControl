@@ -17,18 +17,19 @@ double drawFocus = 15;
 int picture_id = 0;
 
 // View
-int corner_x = 321, corner_y = 93, w = 289, h = 289;
+//int corner_x = 321, corner_y = 93, w = 289, h = 289;
+int corner_x = 0, corner_y = 0, w = 470, h = 470;
 int view_id = 0;
 Rect viewWindow;
-Rect canvasView = Rect(321, 122, 305, 305);//Rect(259, 81, 306, 306);
+Rect canvasView = Rect(210, 58, 340, 340);//Rect(259, 81, 306, 306);
 Rect drawView = Rect(300, 417, 25, 25);//Rect(283, 344, 25, 25); // short: Rect(301, 381, 25, 25); 
 
 // Visual Feedback 
 float iter = 0;
-Mat targetImg = imread("orange.jpg");
+Mat targetImg = imread("dog.jpg");
 Mat edgeMap, angles;
 
-
+int ttttt = 50;
 // Mix
 Vec4f CMYK;
 Stroke stroke;
@@ -37,14 +38,14 @@ int cluster_id = 0;
 int stroke_id = 0;
 int mix_times = 2;
 char mix_color;
-int mix_id = 0;
-float mix_dx = 0.025;
+int mix_id = 4;
+float mix_dx = 0.03;
 float mix_d = 0.008;
 float level = 0;
 
 // Position
-float board_touch = -0.122;//long -0.105;
-float color_touch = -0.115;//long -0.098;
+float board_touch = -0.155;//-0.133; //-0.155;////-0.122;//long -0.105;
+float color_touch = -0.148;// -0.115; //-0.148;//-0.1315;////long -0.098;
 float dip_depth = 0.005;//0.005;
 float view_dx = -0.015; // short: -0.02
 float view_dz = 0.023;//0.015; //short: 0.01;
@@ -82,6 +83,9 @@ int colorClass = 0;
 int strokeCount = 0;
 int totalnum = 0;
 int num = 0;
+ofstream outputFile;
+
+bool show = true;
 
 extern float t1;
 static void onMouse(int event, int x, int y, int f, void* userdata){
@@ -173,6 +177,7 @@ void KeyboardControl(){
 			cin >> board_touch;
 			cout << board_touch << endl;
 			PAUSE
+			color_touch = board_touch + 0.007;
 			pos_C = Point3f(0.65, 0.17, board_touch + view_dz); // z = -0.18 
 			pos_M = Point3f(0.61, 0.17, board_touch + view_dz);
 			pos_Y = Point3f(0.57, 0.17, board_touch + view_dz);
@@ -182,6 +187,9 @@ void KeyboardControl(){
 			break;
 		case 'l':
 			overlap = !overlap;
+			break;
+		case 'k':
+			show = !show;
 			break;
 	}
 	kbCmd = ' ';
@@ -209,7 +217,9 @@ void ModeTransition(){
 			}
 			GoToPoint(pos_mix.x - float(mix_id % 5) * mix_dx + view_dx, pos_mix.y -  (mix_id / 5) * mix_dx, pos_mix.z, 0, 0, 0, 0);
 			bool mixed = false;
+			int repeat_times = 0;
 			while (true){
+				repeat_times++;
 				system("cls");
 				DisplayLoop();
 				captureDevice >> detectImg;
@@ -230,6 +240,8 @@ void ModeTransition(){
 				}
 				else{
 					if (mix_color == 'N'){
+						outputFile << stroke.getCMYK()[0] << " " << stroke.getCMYK()[1] << " " << stroke.getCMYK()[2] << " " << stroke.getCMYK()[3] << " ";
+						outputFile << CMYK[0] << " " << CMYK[1] << " " << CMYK[2] << " " << CMYK[3] << " " << repeat_times << endl;
 						if (!mixed){
 							GoToPoint(pos_mix.x - float(mix_id % 5) * mix_dx, pos_mix.y - (mix_id / 5) * mix_dx, pos_mix.z, 0, 0, 0, 0);
 							// Mix color
@@ -258,7 +270,7 @@ void ModeTransition(){
 						mixed = true;
 					}
 					if (_kbhit()) kbCmd = _getche();
-					if (kbCmd == kb_ESC) {
+					if (kbCmd == 'b') {
 						DrawMode = 'c';
 						break;
 					}
@@ -312,90 +324,104 @@ void ModeTransition(){
 			if (iter < ITERATION){
 				// Generate Strokes
 				if (iterDone){
-					//GoToPoint(0.5f, 0, 0, 0, 0, 0, 0);
-					SetCamera("canvas");
+					while (1){
+						//GoToPoint(0.5f, 0, 0, 0, 0, 0, 0);
+						SetCamera("canvas");
 #if SIMULATION
-					if (iter == 0){
-						captureDevice >> detectImg;
-						detectImg.copyTo(largeCanvas);
-					}
-					else
-						largeCanvas.copyTo(detectImg);
-					Mat canvas = detectImg(Rect(corner_x, corner_y, w, h));
-					resize(canvas, canvas, Size(imageSize, imageSize));
-					/*if (iter == 0){
-						for (int c = 0; c < firstDrawStrokes.size(); c++){
-							int strokeNum = firstDrawStrokes[c].getNum();
-							Vec4f CMYK = firstDrawStrokes[c].getColor();
+						if (iter == 0){
+							captureDevice >> detectImg;
+							detectImg.setTo(Scalar(255, 255, 255));
+							detectImg.copyTo(largeCanvas);
+						}
+						else
+							largeCanvas.copyTo(detectImg);
+						Mat canvas = detectImg(Rect(corner_x, corner_y, w, h));
+						resize(canvas, canvas, Size(imageSize, imageSize));
+						if (iter == 0){
+							for (int c = 0; c < firstDrawStrokes.size(); c++){
+								int strokeNum = firstDrawStrokes[c].getNum();
+								Vec4f CMYK = firstDrawStrokes[c].getColor();
+								for (int s = 0; s < strokeNum; s++){
+									firstDrawStrokes[c].getStroke(s).drawOnCanvas(canvas);
+									Mat resizeCanvas;
+									resize(canvas, resizeCanvas, Size(w, h));
+									resizeCanvas.copyTo(largeCanvas(Rect(corner_x, corner_y, w, h)));
+									imshow("Simulation", largeCanvas);
+									waitKey(10);
+								}
+							}
+							imwrite("image/stage0.jpg", largeCanvas);
+						}
+
+
+						vector<pair <Point, float>> drawPoints;
+						colorDiffer(targetImg, canvas, drawPoints, iter);
+
+						// Generate Strokes
+						StrokeClusters = StrokesGeneration(targetImg, canvas, drawPoints, edgeMap, angles, iter);
+						// Draw on canvas
+						printf("Drawing iteration : %d \n", (int)iter);
+						for (int c = 0; c < StrokeClusters.size(); c++){
+							int strokeNum = StrokeClusters[c].getNum();
+							Vec4f CMYK = StrokeClusters[c].getColor();
+							printf("  # of stroke in cluster %d : %d   (%d, %d, %d, %d) %d \n",
+								c, strokeNum, (int)CMYK[0], (int)CMYK[1], (int)CMYK[2], (int)CMYK[3], StrokeClusters[c].getClusterID());
 							for (int s = 0; s < strokeNum; s++){
-								firstDrawStrokes[c].getStroke(s).drawOnCanvas(canvas);
+								StrokeClusters[c].getStroke(s).drawOnCanvas(canvas, edgeMap);
 								Mat resizeCanvas;
 								resize(canvas, resizeCanvas, Size(w, h));
 								resizeCanvas.copyTo(largeCanvas(Rect(corner_x, corner_y, w, h)));
 								imshow("Simulation", largeCanvas);
 								waitKey(10);
 							}
+							//PAUSE
 						}
-					}*/
-
-
-					vector<pair <Point, float>> drawPoints;
-					colorDiffer(targetImg, canvas, drawPoints, iter);
-
-					// Generate Strokes
-					StrokeClusters = StrokesGeneration(targetImg, canvas, drawPoints, edgeMap, angles, iter);
-					// Draw on canvas
-					printf("Drawing iteration : %d \n", (int)iter);
-					for (int c = 0; c < StrokeClusters.size(); c++){
-						int strokeNum = StrokeClusters[c].getNum();
-						Vec4f CMYK = StrokeClusters[c].getColor();
-						//printf("  # of stroke in cluster %d : %d   (%d, %d, %d, %d) %d \n",
-						//	c, strokeNum, (int)CMYK[0], (int)CMYK[1], (int)CMYK[2], (int)CMYK[3], StrokeClusters[c].getMaxInfo().first);
-						for (int s = 0; s < strokeNum; s++){
-							StrokeClusters[c].getStroke(s).drawOnCanvas(canvas, edgeMap);
-							Mat resizeCanvas;
-							resize(canvas, resizeCanvas, Size(w, h));
-							resizeCanvas.copyTo(largeCanvas(Rect(corner_x, corner_y, w, h)));
-							imshow("Simulation", largeCanvas);
-							waitKey(10);
-						}
-					}
+						imwrite(outputFileName("image/stage", iter+1, ".jpg"), largeCanvas);
 #else
-					captureDevice >> detectImg;
-					detectImg.copyTo(largeCanvas);
+						captureDevice >> detectImg;
+						detectImg.copyTo(largeCanvas);
 
-					Mat canvas = detectImg(canvasView);
-					resize(canvas, canvas, Size(imageSize, imageSize));
+						Mat canvas = detectImg(canvasView);
+						resize(canvas, canvas, Size(imageSize, imageSize));
 
-					vector<pair <Point, float>> drawPoints;
-					colorDiffer(targetImg, canvas, drawPoints, iter);
-					StrokeClusters = StrokesGeneration(targetImg, canvas, drawPoints, edgeMap, angles, iter);
-					cluster_num = StrokeClusters.size();
-					cluster_id = 0;
-					stroke_id = 0;
-					iterDone = false;
+						vector<pair <Point, float>> drawPoints;
+						colorDiffer(targetImg, canvas, drawPoints, iter);
+						StrokeClusters = StrokesGeneration(targetImg, canvas, drawPoints, edgeMap, angles, iter);
+						cluster_num = StrokeClusters.size();
+						cluster_id = 0;
+						stroke_id = 0;
+						iterDone = false;
 
-					// Draw on canvas
-					printf("\n Drawing iteration : %d \n", (int)iter);
-					for (int c = 0; c < StrokeClusters.size(); c++){
-						int strokeNum = StrokeClusters[c].getNum();
-						Vec4f CMYK = StrokeClusters[c].getColor();
-						printf("  # of stroke in cluster %d : %d   (%d, %d, %d, %d) %d \n",
-							c, strokeNum, (int)CMYK[0], (int)CMYK[1], (int)CMYK[2], (int)CMYK[3], StrokeClusters[c].getClusterID());
-						for (int s = 0; s < strokeNum; s++){
-							StrokeClusters[c].getStroke(s).drawOnCanvas(canvas, edgeMap);
-							Mat resizeCanvas;
-							resize(canvas, resizeCanvas, Size(w, h));
-							resizeCanvas.copyTo(largeCanvas(Rect(corner_x, corner_y, w, h)));
-							imshow("Simulation", largeCanvas);
-							waitKey(10);
+						// Draw on canvas
+						printf("\n Drawing iteration : %d \n", (int)iter);
+						for (int c = 0; c < StrokeClusters.size(); c++){
+							int strokeNum = StrokeClusters[c].getNum();
+							Vec4f CMYK = StrokeClusters[c].getColor();
+							printf("  # of stroke in cluster %d : %d   (%d, %d, %d, %d) %d \n",
+								c, strokeNum, (int)CMYK[0], (int)CMYK[1], (int)CMYK[2], (int)CMYK[3], StrokeClusters[c].getClusterID());
+							for (int s = 0; s < strokeNum; s++){
+								StrokeClusters[c].getStroke(s).drawOnCanvas(canvas, edgeMap);
+								Mat resizeCanvas;
+								resize(canvas, resizeCanvas, Size(w, h));
+								resizeCanvas.copyTo(largeCanvas(Rect(corner_x, corner_y, w, h)));
+								imshow("Simulation", largeCanvas);
+								waitKey(10);
+							}
+							PAUSE
 						}
+						string filename = outputFileName("Image/Simulation", iter, ".jpg");
+						imwrite(filename, largeCanvas);
+						cout << "Simulation finished." << endl;
 						PAUSE
+						char t;
+						cin >> t;
+						if (t == 'y'){
+							break;
+						}
+						else{
+							iter = 0;
+						}
 					}
-					string filename = outputFileName("Image/Simulation", iter, ".jpg");
-					imwrite(filename, largeCanvas);
-					cout << "Simulation finished." << endl;
-					PAUSE
 				}
 
 				
@@ -434,10 +460,8 @@ void ModeTransition(){
 						mixHistory.push_back(lastColor);
 					}
 					else{
-						if (mix_id==0)
-							mixHistory[0] = lastColor;
-						else
-							mixHistory[mix_id-1] = lastColor;
+						if (mix_id == mixHistory.size())
+							mixHistory.push_back(lastColor);
 					}
 
 					if (cluster_id < cluster_num){
@@ -460,14 +484,14 @@ void ModeTransition(){
 								minDiffer = colorDiffer;
 							}
 						}
-						if (minDiffer < DIFFERTHRESH){
+						if (minDiffer < ttttt){
 							mix_id = bestIndex;
 						}
 						else{
 							mix_id = mixHistory.size();
 						}
 						
-						if (StrokeClusters[cluster_id].computeDiffer(lastColor)*100. / 255. > DIFFERTHRESH){
+						if (StrokeClusters[cluster_id].computeDiffer(lastColor)*100. / 255. > ttttt){
 							strokeCount = 0;
 							DrawMode = 'm';
 						}
@@ -488,24 +512,25 @@ void ModeTransition(){
 			}
 			break;
 		}
-		case 'b':
-			finger.close();
-			break;
-		case 'n':
-			finger.move(80);
-			break;
 	}
 	kbCmd = ' ';
 }
 
 int main(int argc, char **argv, char **envp)
 {
+	mixHistory.push_back(Vec4f(0, 0, 0, 0));
+	mixHistory.push_back(Vec4f(0, 0, 0, 0));
+	mixHistory.push_back(Vec4f(0, 0, 0, 0));
+	mixHistory.push_back(Vec4f(0, 0, 0, 0));
+	//mixHistory.push_back(Vec4f(0, 0, 0, 0));
+	//mixHistory.push_back(Vec4f(0, 0, 0, 0));
 	Init_IMPCard();
 	Close_IMPCard();
 	Sleep(1000);
 	// Read first draw strokes
 	firstDrawStrokes = readFirstStroke(cluster_num, picture_id);
 #if ROBOT_ON
+	outputFile.open("record.txt");
 	init_LuoLita_1();
 	LitaHand.GripperMove_Abs_To(75.0f, 1);
 

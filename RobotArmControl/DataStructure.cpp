@@ -115,7 +115,7 @@ int StrokeCluster::getClusterID(){
 	if (avgCMYK[3] > 180)
 		return 7;
 	// 000
-	if (avgCMYK[0] < t && avgCMYK[1] < t  && avgCMYK[2] < t && avgCMYK[3] < 50){
+	if (avgCMYK[0] < t && avgCMYK[1] < t  && avgCMYK[2] < t && avgCMYK[3] < t){
 		return 0;
 	}
 	// 100

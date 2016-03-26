@@ -59,7 +59,7 @@ void idleDisplay(){
 	while (MOVL){
 		if (_kbhit())
 			kbCmd = _getche();
-		if (kbCmd == kb_ESC) {
+		if (kbCmd == 'b') {
 			DrawMode = 'c';
 		}
 
@@ -171,12 +171,12 @@ vector<StrokeCluster> readFirstStroke(int & cluster_num, int &picture_id){
 			sep = split(str, ' ');
 			Point start = Point(stoi(sep[0]), stoi(sep[1]));
 			Point end = Point(stoi(sep[2]), stoi(sep[3]));
-			firstDrawStrokes[i].addStroke(Stroke(rgb, cmyk, start, end, 5));
+			firstDrawStrokes[i].addStroke(Stroke(rgb, cmyk, start, end, 10));
 		}
 	}
 	return firstDrawStrokes;
 }
-float dx = -0.0055; float dy = 0.002; float dz = 0.01; float dt = 0.0004;
+float dx = -0.0055; float dy = 0.002; float dz = 0.01; float dt = 0.0;
 bool DrawStroke(Stroke stroke){
 	float scale = paperSize / imageSize / 100.0;
 	float y1 = (-1) * (stroke.getPoint(0).x - 200.0) * scale + canvas_center.y;

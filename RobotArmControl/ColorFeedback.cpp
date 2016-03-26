@@ -43,6 +43,7 @@ void nonMaximaSuppression(const Mat& src, const int sz, Mat& dst, const Mat mask
 		}
 	}
 }
+
 void colorDiffer(const Mat target, Mat detect, vector<pair <Point, float>> & drawPoints, float & iteration) {
 	iteration++;
 
@@ -60,6 +61,7 @@ void colorDiffer(const Mat target, Mat detect, vector<pair <Point, float>> & dra
 			rgb2cmyk(detect.at<Vec3b>(y, x), detectCMYK);
 			absdiff(targetCMYK, detectCMYK, differ);
 			float differMean = mean(differ)[0];
+			//float differMean = max(max(max(differ[0], differ[1]), differ[2]), differ[3]);
 
 			differMap.at<uchar>(y, x) = (uchar)differMean;
 			if (differMean > DRAWTHRESH){
@@ -77,6 +79,7 @@ void colorDiffer(const Mat target, Mat detect, vector<pair <Point, float>> & dra
 #if DISPLAY
 	ShowImg("differMap", differMap, 0);
 	ShowImg("Mask", mask, 0);
+	imwrite("differMap.jpg", differMap * 10);
 #endif 
 	
 	Mat maxima;
@@ -85,6 +88,7 @@ void colorDiffer(const Mat target, Mat detect, vector<pair <Point, float>> & dra
 
 #if DISPLAY
 	ShowImg("Sample Points", maxima, 0);
+	imwrite("Mask.jpg", mask);
 #endif
 
 	for (int y = 0; y < target.rows; y++) {
