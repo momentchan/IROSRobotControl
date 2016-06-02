@@ -1,14 +1,14 @@
 #include "FuncDeclaration.h"
 extern Point mousePosition;
-extern Mat targetImg;
-extern bool overlap;
+extern Mat TargetImg;
+extern bool overlay;
 extern Rect canvasView;
 extern char DrawMode;
-float t1 = 15.0, t2 = 20.0;
+extern float mixThres, mixThresBlack;
 int len = 5;
 int writeOutID = 0;
-extern bool show;
-void VisualFeedback(const Mat image, Rect viewWindow, Stroke &stroke, char & color, float & level, Vec4f & CMYK){
+extern bool showMarker;
+void VisualFeedback(const Mat image, Rect viewWindow, Stroke &stroke, char & color, float & dip_level, Vec4f & CMYK){
 
 	Vec3b targetRGB;
 	Vec4f targetCMYK;
@@ -22,11 +22,11 @@ void VisualFeedback(const Mat image, Rect viewWindow, Stroke &stroke, char & col
 		targetRGB = stroke.getRGB();
 		targetCMYK = stroke.getCMYK();
 	}
-	// Overlap
-	if (overlap){
+	// overlay
+	if (overlay){
 		Mat temp;
 		Rect r;
-		targetImg.copyTo(temp);
+		TargetImg.copyTo(temp);
 		if (viewWindow.x + viewWindow.width < image.cols && viewWindow.y + viewWindow.height < image.rows){
 			resize(temp, temp, Size(viewWindow.width, viewWindow.height));
 			addWeighted(temp, 0.5, image(viewWindow), 0.5, 0.0, temp);
@@ -105,7 +105,7 @@ void VisualFeedback(const Mat image, Rect viewWindow, Stroke &stroke, char & col
 
 
 	// Draw marker
-	if (show){
+	if (showMarker){
 	line(image, Point(center.x - 10, center.y), Point(center.x + 10, center.y), Scalar(0, 0, 255));
 	line(image, Point(center.x, center.y - 10), Point(center.x, center.y + 10), Scalar(0, 0, 255));
 	}
@@ -138,7 +138,7 @@ void VisualFeedback(const Mat image, Rect viewWindow, Stroke &stroke, char & col
 
 	rectangle(image, Point(w - 2 * patch_size, 0), Point(w - patch_size, patch_size), totalRGB, -1, 8);
 	rectangle(image, Point(w - patch_size, 0), Point(w, patch_size), targetRGB, -1, 8);
-	if (show){
+	if (showMarker){
 		rectangle(image, Point(viewWindow.x, viewWindow.y), Point(viewWindow.x + viewWindow.width, viewWindow.y + viewWindow.height), (255, 0, 0), 2);
 	}
 	
@@ -149,37 +149,37 @@ void VisualFeedback(const Mat image, Rect viewWindow, Stroke &stroke, char & col
 	printf(" Differ: (%d,%d,%d,%d)\n\n", (int)differ[0], (int)differ[1], (int)differ[2], (int)differ[3]);
 
 	
-	level = round(totalMaxDiffer);
+	dip_level = round(totalMaxDiffer);
 	if (DrawMode == 'm'){
 		if (targetCMYK[3] > 60){
-			if (totalMaxDiffer < t2)
+			if (totalMaxDiffer < mixThresBlack)
 				totalColorToDraw = 5;
 		}
 		else{
-			if (totalMaxDiffer < t1)
+			if (totalMaxDiffer < mixThres)
 				totalColorToDraw = 5;
 		}
 	}
 
 	switch (totalColorToDraw){
 	case 0:
-		printf(" Draw: Cyan %d", (int)level);
+		printf(" Draw: Cyan %d", (int)dip_level);
 		color = 'C';
 		break;
 	case 1:
-		printf(" Draw: Magenta %d", (int)level);
+		printf(" Draw: Magenta %d", (int)dip_level);
 		color = 'M';
 		break;
 	case 2:
-		printf(" Draw: Yellow %d", (int)level);
+		printf(" Draw: Yellow %d", (int)dip_level);
 		color = 'Y';
 		break;
 	case 3:
-		printf(" Draw: Black %d", (int)level);
+		printf(" Draw: Black %d", (int)dip_level);
 		color = 'K';
 		break;
 	case 4:
-		printf(" Draw: White %d", (int)level);
+		printf(" Draw: White %d", (int)dip_level);
 		color = 'W';
 		break;
 	case 5:{

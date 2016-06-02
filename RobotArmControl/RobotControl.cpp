@@ -2,15 +2,15 @@
 #include "LuoLitaArm.h"
 // Gloabal variable
 // Camera
-extern VideoCapture captureDevice;
-extern Mat detectImg;
+extern VideoCapture CaptureDevice;
+extern Mat DetectImg;
 extern double canvasFocus;
 extern double drawFocus;
 extern int picture_id;
 
 // View
 extern int corner_x, corner_y, w, h;
-extern int view_id;
+extern int pigment_id;
 extern Rect viewWindow;
 extern Rect canvasView;
 extern Rect drawView;
@@ -21,15 +21,14 @@ extern Stroke stroke;
 extern int cluster_num;
 extern int cluster_id;
 extern int stroke_id;
-extern int mix_times;
 extern char mix_color;
 extern float mix_id;
 extern float mix_dx;
-extern float level;
+extern float dip_level;
 
 // Position
 extern float board_touch;
-extern float dip_depth;
+extern float max_depth;
 extern float view_dx;
 extern float view_dz;
 extern Point3f pos_C;
@@ -48,11 +47,12 @@ extern float step_move;
 
 // Draw Point Information
 extern float paperSize;
-extern float imageSize;
+extern float imageWidth;
+extern float imageHeight;
 // Other
 extern Finger finger;
 extern char DrawMode;
-extern bool firstStroke;
+extern bool UPstroke;
 extern vector<StrokeCluster> StrokeClusters;
 
 void idleDisplay(){
@@ -66,13 +66,13 @@ void idleDisplay(){
 		system("cls");
 		DisplayLoop();
 		if (mix_color == 'C')
-			printf("\n Draw: Cyan %d", (int)level);
+			printf("\n Draw: Cyan %d", (int)dip_level);
 		else if (mix_color == 'M')
-			printf("\n Draw: Magenta %d", (int)level);
+			printf("\n Draw: Magenta %d", (int)dip_level);
 		else if (mix_color == 'Y')
-			printf("\n Draw: Yellow %d", (int)level);
+			printf("\n Draw: Yellow %d", (int)dip_level);
 		else if (mix_color == 'K')
-			printf("\n Draw: White %d", (int)level);
+			printf("\n Draw: White %d", (int)dip_level);
 
 		printf("\n cluster_id: %d  stroke_id: %d", cluster_id, stroke_id);
 
@@ -82,8 +82,8 @@ void idleDisplay(){
 		printf(" Detect: (%d,%d,%d,%d)\n", (int)CMYK[0], (int)CMYK[1], (int)CMYK[2], (int)CMYK[3]);
 		printf(" Differ: (%d,%d,%d,%d)\n", (int)(stroke.getCMYK()[0] * 100. / 255.) - (int)CMYK[0], (int)(stroke.getCMYK()[1] * 100. / 255.) - (int)CMYK[1],
 			(int)(stroke.getCMYK()[2] * 100. / 255.) - (int)CMYK[2], (int)(stroke.getCMYK()[3] * 100. / 255.) - (int)CMYK[3]);
-		captureDevice >> detectImg;
-		imshow("Capture", detectImg);
+		CaptureDevice >> DetectImg;
+		imshow("Capture", DetectImg);
 		cvWaitKey(33);
 		Sleep(33);
 	}
@@ -129,7 +129,7 @@ void MixColor(float d, int mix_times){
 	}
 	MoveRelative(0, -2 * mix_d, 0, 0, 0, 0);
 }
-vector<StrokeCluster> readFirstStroke(int & cluster_num, int &picture_id){
+vector<StrokeCluster> readUPstroke(int & cluster_num, int &picture_id){
 	//count how many files in drawPoints directory
 	WIN32_FIND_DATA fd;
 	HANDLE h = FindFirstFile(TEXT("drawPoints/fill*.txt"), &fd);
@@ -146,7 +146,7 @@ vector<StrokeCluster> readFirstStroke(int & cluster_num, int &picture_id){
 		} while (FindNextFile(h, &fd));
 		FindClose(h);
 	}
-	vector<StrokeCluster> firstDrawStrokes(cluster_num);
+	vector<StrokeCluster> UPDrawStrokes(cluster_num);
 
 	// Read fill points
 	vector<string> sep;
@@ -171,21 +171,22 @@ vector<StrokeCluster> readFirstStroke(int & cluster_num, int &picture_id){
 			sep = split(str, ' ');
 			Point start = Point(stoi(sep[0]), stoi(sep[1]));
 			Point end = Point(stoi(sep[2]), stoi(sep[3]));
-			firstDrawStrokes[i].addStroke(Stroke(rgb, cmyk, start, end, 10));
+			UPDrawStrokes[i].addStroke(Stroke(rgb, cmyk, start, end, 10));
 		}
 	}
-	return firstDrawStrokes;
+	return UPDrawStrokes;
 }
-float dx = -0.0055; float dy = 0.002; float dz = 0.01; float dt = 0.0;
+
+float dx = -0.0055; float dy = 0.002; float dz = 0.03; float dt = 0.018; 
+
 bool DrawStroke(Stroke stroke){
-	float scale = paperSize / imageSize / 100.0;
-	float y1 = (-1) * (stroke.getPoint(0).x - 200.0) * scale + canvas_center.y;
-	float y2 = (-1) * (stroke.getPoint(1).x - 200.0) * scale + canvas_center.y;
-	float x1 = (-1) * (stroke.getPoint(0).y - 200.0) * scale + canvas_center.x;
-	float x2 = (-1) * (stroke.getPoint(1).y - 200.0) * scale + canvas_center.x;
+	float scale = paperSize / min(imageWidth, imageHeight) / 100.0;
+	float y1 = (-1) * (stroke.getPoint(0).x - imageWidth / 2) * scale + canvas_center.y;
+	float y2 = (-1) * (stroke.getPoint(1).x - imageWidth / 2) * scale + canvas_center.y;
+	float x1 = (-1) * (stroke.getPoint(0).y - imageHeight / 2) * scale + canvas_center.x;
+	float x2 = (-1) * (stroke.getPoint(1).y - imageHeight / 2) * scale + canvas_center.x;
 	float distance = cv::norm(Point2f(x1, y1) - Point2f(x2, y2))*100; //cm
 	
-	//if (true){
 	if (DrawMode == 'f'){
 		GoToPoint(x1, y1, board_touch + dz, 0, 0, 0, 0);
 		GoToPoint(x1, y1, board_touch + dt, 0, 0, 0, 0);
@@ -198,9 +199,8 @@ bool DrawStroke(Stroke stroke){
 	}
 	if (distance > MIN_DISTANCE){
 		GoToPoint(x1, y1, board_touch + dz, 0, 0, 0, 0);
-		GoToPoint(x1, y1, board_touch, 0, 0, 0, 0);
-		GoToPoint(x2, y2, board_touch, 0, 0, 0, 0);
-		GoToPoint(x2 + dx, y2, board_touch + dz, 0, 0, 0, 0);
+		GoToPoint(x1, y1, board_touch + dt, 0, 0, 0, 0);
+		GoToPoint(x2, y2, board_touch + dt, 0, 0, 0, 0);
 		if (y2 - y1 > 0)
 			GoToPoint(x2 + dx, y2 - dy, board_touch + dz, 0, 0, 0, 0);
 		else
@@ -234,12 +234,12 @@ void CreatRectangle(int, void*){
 }
 void SetCamera(string c){
 	if (c == "canvas"){
-		captureDevice.set(CV_CAP_PROP_FOCUS, canvasFocus);
+		CaptureDevice.set(CV_CAP_PROP_FOCUS, canvasFocus);
 		corner_x = canvasView.x, corner_y = canvasView.y, w = canvasView.width, h = canvasView.height;
 	}
 	else if(c == "draw")
 	{
-		captureDevice.set(CV_CAP_PROP_FOCUS, drawFocus);
+		CaptureDevice.set(CV_CAP_PROP_FOCUS, drawFocus);
 		corner_x = drawView.x, corner_y = drawView.y, w = drawView.width, h = drawView.height;
 		destroyWindow("Rectangle");
 	}

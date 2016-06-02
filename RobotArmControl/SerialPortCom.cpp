@@ -11,7 +11,7 @@ bool SerialPortCom::openPort(string port_name, int baud_rate = 9600)
 						0,		// exclusive access
 						0,		// no security
 						OPEN_EXISTING,
-						0,		// no overlapped I/O
+						0,		// no overlayped I/O
 						NULL);	// null template
 
 	if(_hComm == INVALID_HANDLE_VALUE){
@@ -92,11 +92,11 @@ string SerialPortCom::readPort()
 	string ret;
 	DWORD Event;
 	DWORD ReadCount;
-	clock_t t1,t2;
-	t1=clock();
+	clock_t mixThres,mixThresBlack;
+	mixThres=clock();
 	while(true)
 	{
-		t2=clock();
+		mixThresBlack=clock();
 		if(WaitCommEvent(_hComm, &Event, NULL))
 		{
 			do{
@@ -123,7 +123,7 @@ string SerialPortCom::readPort()
 			cout << "Error in WaitCommEvent" << endl;
 			break;
 		}
-		if(t2-t1>10000)
+		if(mixThresBlack-mixThres>10000)
 			break;
 		else;
 	}

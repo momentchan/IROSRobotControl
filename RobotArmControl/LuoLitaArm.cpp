@@ -6,88 +6,91 @@ extern int mode_display;
 // Global variable
 // Timer
 void RTFCNDCL TimerHandler1(void * nContext);
-vector<StrokeCluster> firstDrawStrokes;
+vector<StrokeCluster> UPDrawStrokes;
 vector<StrokeCluster> StrokeClusters;
 
 // Camera
-VideoCapture captureDevice;
-Mat detectImg;
+VideoCapture CaptureDevice;
+Mat DetectImg;
 double canvasFocus = 10;
 double drawFocus = 15;
 int picture_id = 0;
 
 // View
-//int corner_x = 321, corner_y = 93, w = 289, h = 289;
 int corner_x = 0, corner_y = 0, w = 470, h = 470;
-int view_id = 0;
+int pigment_id = 0;
 Rect viewWindow;
-Rect canvasView = Rect(210, 58, 340, 340);//Rect(259, 81, 306, 306);
-Rect drawView = Rect(300, 417, 25, 25);//Rect(283, 344, 25, 25); // short: Rect(301, 381, 25, 25); 
+Rect canvasView = Rect(136, 0, 389, 455);
+Rect drawView = Rect(300, 417, 25, 25);
 
 // Visual Feedback 
 float iter = 0;
-Mat targetImg = imread("dog.jpg");
+Mat TargetImg = imread("pindar.jpg");
 Mat edgeMap, angles;
 
-int ttttt = 50;
 // Mix
 Vec4f CMYK;
 Stroke stroke;
 int cluster_num = 0;
 int cluster_id = 0;
 int stroke_id = 0;
-int mix_times = 2;
 char mix_color;
-int mix_id = 4;
-float mix_dx = 0.03;
-float mix_d = 0.008;
-float level = 0;
+int mix_id = 0;
+float mix_dx = 0.03;		// distance between mixing positions
+float mix_d = 0.008;		// back and forth distance
+float dip_level = 0;		// determine dipping depth %
+
+// Theshold
+float mixThres = 15.0;
+float mixThresBlack = 20.0;
+int ColorChangeThres = 80;	// change mixing position
 
 // Position
-float board_touch = -0.155;//-0.133; //-0.155;////-0.122;//long -0.105;
-float color_touch = -0.148;// -0.115; //-0.148;//-0.1315;////long -0.098;
-float dip_depth = 0.005;//0.005;
-float view_dx = -0.015; // short: -0.02
-float view_dz = 0.023;//0.015; //short: 0.01;
-Point3f pos_C = Point3f(0.65, 0.17, board_touch + view_dz); // z = -0.18 
-Point3f pos_M = Point3f(0.61, 0.17, board_touch + view_dz);
-Point3f pos_Y = Point3f(0.57, 0.17, board_touch + view_dz);
-Point3f pos_W = Point3f(0.53, 0.17, board_touch + view_dz);
-Point3f pos_K = Point3f(0.49, 0.17, board_touch + view_dz);
-Point3f pos_mix = Point3f(0.65, 0.12, board_touch + view_dz);
-Point2f canvas_center = Point2f(0.6, -0.1);
-Point mousePosition = Point(0, 0);
+float board_touch = -0.168;
+float color_touch = -0.145;
+float max_depth = 0.005;
+float view_dx = -0.015; 
+float view_dz = 0.04;
+Point3f pos_C = Point3f(0.64, 0.31, board_touch + view_dz); 
+Point3f pos_M = Point3f(0.595, 0.31, board_touch + view_dz);
+Point3f pos_Y = Point3f(0.55, 0.31, board_touch + view_dz);
+Point3f pos_W = Point3f(0.505, 0.31, board_touch + view_dz);
+Point3f pos_K = Point3f(0.46, 0.31, board_touch + view_dz);
+Point3f pos_mix = Point3f(0.64, 0.26, board_touch + view_dz);
+Point2f canvas_center = Point2f(0.55, -0.05); 
+Point mousePosition = Point(0, 0);		// detect color using mouse (pixel)
 Vector6f t;
 Matrix4f T;
 
 // Move
-float speed = 0.6f;
+float speed = 0.8f;
 float step_move = 0.005f;
 
 // Draw Point Information
-float paperSize = 20;
-float imageSize = 400;
+float paperSize = 38;					// [cm]
+float imageWidth = TargetImg.cols;
+float imageHeight = TargetImg.rows;
 
-// Other
-Finger finger;
-bool swithColor = true;
-char DrawMode = 'c'; // c: capture only   m: mix   d: draw
-bool iterDone = true;
-bool firstStroke = false;
-bool overlap = false;
-bool startF = false;
-vector<Vec4f> mixHistory;
-Vec4f lastColor;
-
-int colorClass = 0;
-int strokeCount = 0;
-int totalnum = 0;
-int num = 0;
+// Clustering and Ordering
+int colorClass = 0;						// the class of mixing colr (from 0 to 7)
+int strokeCount = 0;					// counting the number of drawn strokes ( reset to 0 in every 3 strokes)
+int totalnum = 0;						// total number of strokes to be drawn
+int num = 0;							// the number of all drawn strokes
+bool showMarker = true;					// show the markers on the screen for detection
 ofstream outputFile;
 
-bool show = true;
+// Others
+Finger finger;
+char DrawMode = 'c';					// c: capture only   m: mix   d: draw  f: feedback
+bool switchColor = true;
+bool iterDone = true;
+bool UPstroke = false;					// underpainting strokes
+bool overlay = false;					// overlay original picture on canvas
+bool startF = false;					// start feedback loop
+vector<Vec4f> mixHistory;				// record mixed colors info
+Vec4f lastColor;						// last mixed color
 
-extern float t1;
+
 static void onMouse(int event, int x, int y, int f, void* userdata){
 	if (event == CV_EVENT_RBUTTONDOWN){
 		mousePosition.x = x;
@@ -130,26 +133,29 @@ void KeyboardControl(){
 			break;
 		// View Control
 		case 'o':
-			GoToPoint(0.5f, 0, 0, 0, 0, 0, 0);
+			GoToPoint(0.46, -0.05, 0.11, 0, 0, 0, 0);
 			SetCamera("canvas");
+			break;
+		case 't':  // tuning the plan position
+			GoToPoint(0.7f, 0.25, board_touch + 0.01, 0, 0, 0, 0);
 			break;
 		case 'v':
 			cout << "\n Input view color id \n";
-			cin >> view_id;
+			cin >> pigment_id;
 			corner_x = drawView.x, corner_y = drawView.y, w = drawView.width, h = drawView.height;
-			if (view_id == 0){
+			if (pigment_id == 0){
 				GoToPoint(pos_C.x, pos_C.y, pos_C.z, 0, 0, 0, 0);
 			}
-			else if (view_id == 1){
+			else if (pigment_id == 1){
 				GoToPoint(pos_M.x, pos_M.y, pos_M.z, 0, 0, 0, 0);
 			}
-			else if (view_id == 2){
+			else if (pigment_id == 2){
 				GoToPoint(pos_Y.x, pos_Y.y, pos_Y.z, 0, 0, 0, 0);
 			}
-			else if (view_id == 3){
+			else if (pigment_id == 3){
 				GoToPoint(pos_W.x, pos_W.y, pos_W.z, 0, 0, 0, 0);
 			}
-			else if (view_id == 4){
+			else if (pigment_id == 4){
 				GoToPoint(pos_K.x, pos_K.y, pos_K.z, 0, 0, 0, 0);
 			}
 			break;
@@ -160,12 +166,12 @@ void KeyboardControl(){
 		// Camera Control
 		case 'c': {
 			string fileName = outputFileName("Image/take", picture_id, ".jpg");
-			imwrite(fileName, detectImg);
+			imwrite(fileName, DetectImg);
 			picture_id++;
 			break;
 		}
 		case 'p':
-			cout << "Camera focus on: " << captureDevice.get(CV_CAP_PROP_FOCUS) << endl;
+			cout << "Camera focus on: " << CaptureDevice.get(CV_CAP_PROP_FOCUS) << endl;
 			PAUSE
 			break;
 		case 'm':		// change mode
@@ -177,19 +183,19 @@ void KeyboardControl(){
 			cin >> board_touch;
 			cout << board_touch << endl;
 			PAUSE
-			color_touch = board_touch + 0.007;
-			pos_C = Point3f(0.65, 0.17, board_touch + view_dz); // z = -0.18 
-			pos_M = Point3f(0.61, 0.17, board_touch + view_dz);
-			pos_Y = Point3f(0.57, 0.17, board_touch + view_dz);
-			pos_W = Point3f(0.53, 0.17, board_touch + view_dz);
-			pos_K = Point3f(0.49, 0.17, board_touch + view_dz);
-			pos_mix = Point3f(0.65, 0.12, board_touch + view_dz);
+			color_touch = board_touch + 0.023;
+			pos_C = Point3f(0.64, 0.31, board_touch + view_dz);
+			pos_M = Point3f(0.595, 0.31, board_touch + view_dz);
+			pos_Y = Point3f(0.55, 0.31, board_touch + view_dz);
+			pos_W = Point3f(0.505, 0.31, board_touch + view_dz);
+			pos_K = Point3f(0.46, 0.31, board_touch + view_dz);
+			pos_mix = Point3f(0.64, 0.26, board_touch + view_dz);
 			break;
 		case 'l':
-			overlap = !overlap;
+			overlay = !overlay;
 			break;
 		case 'k':
-			show = !show;
+			showMarker = !showMarker;
 			break;
 	}
 	kbCmd = ' ';
@@ -199,21 +205,21 @@ void ModeTransition(){
 	switch (DrawMode){
 		// Camera View Mode
 		case 'c':
-			captureDevice >> detectImg;
+			CaptureDevice >> DetectImg;
 			namedWindow("Rectangle");
 			createTrackbar("X", "Rectangle", &corner_x, 640, CreatRectangle);
 			createTrackbar("Y", "Rectangle", &corner_y, 480, CreatRectangle);
 			createTrackbar("W", "Rectangle", &w, 640, CreatRectangle);
 			createTrackbar("H", "Rectangle", &h, 480, CreatRectangle);
 			CreatRectangle(0, 0);
-			VisualFeedback(detectImg, viewWindow, stroke, mix_color, level, CMYK);
+			VisualFeedback(DetectImg, viewWindow, stroke, mix_color, dip_level, CMYK);
 			break;
 		// Mix color Mode
 		case 'm':{
 			SetCamera("draw");
 			// Go to mix position to check color
-			if (swithColor){
-				swithColor = false;
+			if (switchColor){
+				switchColor = false;
 			}
 			GoToPoint(pos_mix.x - float(mix_id % 5) * mix_dx + view_dx, pos_mix.y -  (mix_id / 5) * mix_dx, pos_mix.z, 0, 0, 0, 0);
 			bool mixed = false;
@@ -222,33 +228,33 @@ void ModeTransition(){
 				repeat_times++;
 				system("cls");
 				DisplayLoop();
-				captureDevice >> detectImg;
-				VisualFeedback(detectImg, viewWindow, stroke, mix_color, level, CMYK);
+				CaptureDevice >> DetectImg;
+				VisualFeedback(DetectImg, viewWindow, stroke, mix_color, dip_level, CMYK);
 				lastColor = CMYK;
-				float dip_z = (board_touch + view_dz - color_touch) + level / 100.0 * dip_depth;
+				float dip_z = (board_touch + view_dz - color_touch) + dip_level / 100.0 * max_depth;
 
 				// Mix white
 				if (stroke.getCMYK()[0] < 50 && stroke.getCMYK()[1] < 50 && stroke.getCMYK()[2] < 50 && stroke.getCMYK()[3] < 50){
 					GoToPoint(pos_W.x, pos_W.y, pos_W.z, 0, 0, 0, 0);
 					// Dip color
 					DipColor(dip_z);
-					if (firstStroke)
+					if (UPstroke)
 						DrawMode = 'd';
 					else
 						DrawMode = 'f';
 					break;
 				}
 				else{
-					if (mix_color == 'N'){
+					if (mix_color == 'N' || repeat_times>9){
 						outputFile << stroke.getCMYK()[0] << " " << stroke.getCMYK()[1] << " " << stroke.getCMYK()[2] << " " << stroke.getCMYK()[3] << " ";
 						outputFile << CMYK[0] << " " << CMYK[1] << " " << CMYK[2] << " " << CMYK[3] << " " << repeat_times << endl;
 						if (!mixed){
 							GoToPoint(pos_mix.x - float(mix_id % 5) * mix_dx, pos_mix.y - (mix_id / 5) * mix_dx, pos_mix.z, 0, 0, 0, 0);
 							// Mix color
-							MixColor(view_dz, mix_times);
+							MixColor(view_dz, MIXTIMES);
 							GoToPoint(pos_mix.x - float(mix_id % 5) * mix_dx, pos_mix.y - (mix_id / 5) * mix_dx, pos_mix.z, 0, 0, 0, 0);
 						}
-						if (firstStroke)
+						if (UPstroke)
 							DrawMode = 'd';
 						else
 							DrawMode = 'f';
@@ -265,7 +271,7 @@ void ModeTransition(){
 						DipColor(dip_z);
 						GoToPoint(pos_mix.x - float(mix_id % 5) * mix_dx, pos_mix.y - (mix_id / 5) * mix_dx, pos_mix.z, 0, 0, 0, 0);
 						// Mix color
-						MixColor(view_dz, mix_times);
+						MixColor(view_dz, MIXTIMES);
 						GoToPoint(pos_mix.x - float(mix_id % 5) * mix_dx + view_dx, pos_mix.y - (mix_id / 5) * mix_dx, pos_mix.z, 0, 0, 0, 0);
 						mixed = true;
 					}
@@ -282,16 +288,16 @@ void ModeTransition(){
 		// Draw First Layer Mode
 		case 'd':
 			SetCamera("draw");
-			if (stroke_id < firstDrawStrokes[cluster_id].getNum()){
-				stroke = firstDrawStrokes[cluster_id].getStroke(stroke_id);
+			if (stroke_id < UPDrawStrokes[cluster_id].getNum()){
+				stroke = UPDrawStrokes[cluster_id].getStroke(stroke_id);
 				// Draw stroke
 				if (DrawStroke(stroke)){
 					stroke_id++;
 					strokeCount++;
-					if (stroke_id < firstDrawStrokes[cluster_id].getNum()){
-						if (strokeCount % 3 == 0){
-							captureDevice >> detectImg;
-							VisualFeedback(detectImg, Rect(306, 442, 25, 25), stroke, mix_color, level, CMYK);
+					if (stroke_id < UPDrawStrokes[cluster_id].getNum()){
+						if (strokeCount % 2 == 0){
+							CaptureDevice >> DetectImg;
+							VisualFeedback(DetectImg, Rect(306, 442, 25, 25), stroke, mix_color, dip_level, CMYK);
 							if (mix_color != 'N')
 								DrawMode = 'm';
 						}
@@ -305,17 +311,17 @@ void ModeTransition(){
 				printf("\n Region %d is finished! \n", cluster_id);
 				PAUSE
 				mix_id++;
-				swithColor = true;
+				switchColor = true;
 				if (cluster_id < cluster_num){
 					stroke_id = 0;
-					stroke = firstDrawStrokes[cluster_id].getStroke(stroke_id);
+					stroke = UPDrawStrokes[cluster_id].getStroke(stroke_id);
 					DrawMode = 'm';
 				}
 				else{
 					printf("\n First Layer stroke finished. \n");
 					Sleep(1000); 
 					DrawMode = 'c';
-					firstStroke = false;
+					UPstroke = false;
 				}
 			}
 			break;
@@ -324,25 +330,23 @@ void ModeTransition(){
 			if (iter < ITERATION){
 				// Generate Strokes
 				if (iterDone){
-					while (1){
-						//GoToPoint(0.5f, 0, 0, 0, 0, 0, 0);
 						SetCamera("canvas");
 #if SIMULATION
 						if (iter == 0){
-							captureDevice >> detectImg;
-							detectImg.setTo(Scalar(255, 255, 255));
-							detectImg.copyTo(largeCanvas);
+							CaptureDevice >> DetectImg;
+							DetectImg.setTo(Scalar(255, 255, 255));
+							DetectImg.copyTo(largeCanvas);
 						}
 						else
-							largeCanvas.copyTo(detectImg);
-						Mat canvas = detectImg(Rect(corner_x, corner_y, w, h));
-						resize(canvas, canvas, Size(imageSize, imageSize));
+							largeCanvas.copyTo(DetectImg);
+						Mat canvas = DetectImg(Rect(corner_x, corner_y, w, h));
+						resize(canvas, canvas, Size(TargetImg.size()));
 						if (iter == 0){
-							for (int c = 0; c < firstDrawStrokes.size(); c++){
-								int strokeNum = firstDrawStrokes[c].getNum();
-								Vec4f CMYK = firstDrawStrokes[c].getColor();
+							for (int c = 0; c < UPDrawStrokes.size(); c++){
+								int strokeNum = UPDrawStrokes[c].getNum();
+								Vec4f CMYK = UPDrawStrokes[c].getColor();
 								for (int s = 0; s < strokeNum; s++){
-									firstDrawStrokes[c].getStroke(s).drawOnCanvas(canvas);
+									UPDrawStrokes[c].getStroke(s).drawOnCanvas(canvas);
 									Mat resizeCanvas;
 									resize(canvas, resizeCanvas, Size(w, h));
 									resizeCanvas.copyTo(largeCanvas(Rect(corner_x, corner_y, w, h)));
@@ -355,10 +359,10 @@ void ModeTransition(){
 
 
 						vector<pair <Point, float>> drawPoints;
-						colorDiffer(targetImg, canvas, drawPoints, iter);
+						colorDiffer(TargetImg, canvas, drawPoints, iter);
 
 						// Generate Strokes
-						StrokeClusters = StrokesGeneration(targetImg, canvas, drawPoints, edgeMap, angles, iter);
+						StrokeClusters = StrokesGeneration(TargetImg, canvas, drawPoints, edgeMap, angles, iter);
 						// Draw on canvas
 						printf("Drawing iteration : %d \n", (int)iter);
 						for (int c = 0; c < StrokeClusters.size(); c++){
@@ -378,15 +382,15 @@ void ModeTransition(){
 						}
 						imwrite(outputFileName("image/stage", iter+1, ".jpg"), largeCanvas);
 #else
-						captureDevice >> detectImg;
-						detectImg.copyTo(largeCanvas);
+						CaptureDevice >> DetectImg;
+						DetectImg.copyTo(largeCanvas);
 
-						Mat canvas = detectImg(canvasView);
-						resize(canvas, canvas, Size(imageSize, imageSize));
+						Mat canvas = DetectImg(canvasView);
+						resize(canvas, canvas, Size(imageWidth, imageHeight));
 
 						vector<pair <Point, float>> drawPoints;
-						colorDiffer(targetImg, canvas, drawPoints, iter);
-						StrokeClusters = StrokesGeneration(targetImg, canvas, drawPoints, edgeMap, angles, iter);
+						colorDiffer(TargetImg, canvas, drawPoints, iter);
+						StrokeClusters = StrokesGeneration(TargetImg, canvas, drawPoints, edgeMap, angles, iter);
 						cluster_num = StrokeClusters.size();
 						cluster_id = 0;
 						stroke_id = 0;
@@ -413,15 +417,6 @@ void ModeTransition(){
 						imwrite(filename, largeCanvas);
 						cout << "Simulation finished." << endl;
 						PAUSE
-						char t;
-						cin >> t;
-						if (t == 'y'){
-							break;
-						}
-						else{
-							iter = 0;
-						}
-					}
 				}
 
 				
@@ -454,7 +449,7 @@ void ModeTransition(){
 					cluster_id++;
 					printf("\n Region %d is finished! \n", cluster_id);
 					Sleep(500);
-					swithColor = true;
+					switchColor = true;
 
 					if (mixHistory.size() == 0){
 						mixHistory.push_back(lastColor);
@@ -484,14 +479,14 @@ void ModeTransition(){
 								minDiffer = colorDiffer;
 							}
 						}
-						if (minDiffer < ttttt){
+						if (minDiffer < ColorChangeThres){
 							mix_id = bestIndex;
 						}
 						else{
 							mix_id = mixHistory.size();
 						}
 						
-						if (StrokeClusters[cluster_id].computeDiffer(lastColor)*100. / 255. > ttttt){
+						if (StrokeClusters[cluster_id].computeDiffer(lastColor)*100. / 255. > ColorChangeThres || strokeCount % 8 == 0){
 							strokeCount = 0;
 							DrawMode = 'm';
 						}
@@ -518,17 +513,24 @@ void ModeTransition(){
 
 int main(int argc, char **argv, char **envp)
 {
-	mixHistory.push_back(Vec4f(0, 0, 0, 0));
-	mixHistory.push_back(Vec4f(0, 0, 0, 0));
-	mixHistory.push_back(Vec4f(0, 0, 0, 0));
-	mixHistory.push_back(Vec4f(0, 0, 0, 0));
+	//mixHistory.push_back(Vec4f(0, 0, 0, 0));
+	//mixHistory.push_back(Vec4f(0, 0, 0, 0));
+	//mixHistory.push_back(Vec4f(0, 0, 0, 0));
 	//mixHistory.push_back(Vec4f(0, 0, 0, 0));
 	//mixHistory.push_back(Vec4f(0, 0, 0, 0));
 	Init_IMPCard();
 	Close_IMPCard();
+	// Initialize Camera
+	CaptureDevice.open(0);
+	if (!CaptureDevice.isOpened()){
+		cout << "Camera not found!";
+		PAUSE
+	}
 	Sleep(1000);
 	// Read first draw strokes
-	firstDrawStrokes = readFirstStroke(cluster_num, picture_id);
+	UPDrawStrokes = readUPstroke(cluster_num, picture_id);
+
+
 #if ROBOT_ON
 	outputFile.open("record.txt");
 	init_LuoLita_1();
@@ -553,18 +555,13 @@ int main(int argc, char **argv, char **envp)
 	kbCmd = ' ';
 	mode_display = 0;
 	
-	EMapConstruct(targetImg, edgeMap, angles);
+	EMapConstruct(TargetImg, edgeMap, angles);
 
-	// Initialize Camera
-	captureDevice.open(0);
-	if (!captureDevice.isOpened()){
-		cout << "Camera not found!";
-		PAUSE
-	}
+	
 	// Initialize Finger Pose
 	//initFinger();
 
-	stroke = firstDrawStrokes[0].getStroke(0);
+	stroke = UPDrawStrokes[0].getStroke(0);
 	while (true)
 	{
 		// Get keyboard command

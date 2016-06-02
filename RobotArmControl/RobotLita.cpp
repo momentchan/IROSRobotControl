@@ -151,7 +151,7 @@ Matrix3f delta2rr( const Vector3f& d , const Matrix3f& R0 )
 	return R1;
 }
 
-Vector6f tr2delta( const Matrix4f& T1, const Matrix4f& T0 )
+Vector6f tr2delta( const Matrix4f& mixThres, const Matrix4f& T0 )
 {
 	Vector6f delta;
 	Matrix3f S;
@@ -159,17 +159,17 @@ Vector6f tr2delta( const Matrix4f& T1, const Matrix4f& T0 )
 	Matrix3f R0t;
 	//Matrix3f I3;
 	//I3 << 1,0,0,0,1,0,0,0,1;
-	delta.block(0,0,3,1) = T1.block(0,3,3,1) - T0.block(0,3,3,1);
+	delta.block(0,0,3,1) = mixThres.block(0,3,3,1) - T0.block(0,3,3,1);
 	/*for( int i=0; i < 3; i++)
 	{
 		for( int j=0; j < 3; j++)
 		{
-			S(i,j) = T1(0,j)*T0(0,i) + T1(1,j)*T0(1,i) + T1(2,j)*T0(2,i) - eye3[i][j];
+			S(i,j) = mixThres(0,j)*T0(0,i) + mixThres(1,j)*T0(1,i) + mixThres(2,j)*T0(2,i) - eye3[i][j];
 		}
 	}*/
-	R1 = T1.block(0,0,3,3);
+	R1 = mixThres.block(0,0,3,3);
 	R0t = T0.block(0,0,3,3).transpose();
-	//S = (T1.block(0,0,3,3))*(T0.block(0,0,3,3).transpose());
+	//S = (mixThres.block(0,0,3,3))*(T0.block(0,0,3,3).transpose());
 	S = R1*R0t;
 	S(0,0) = S(0,0) - 1.0f;
 	S(1,1) = S(1,1) - 1.0f;
@@ -183,12 +183,12 @@ Vector6f tr2delta( const Matrix4f& T1, const Matrix4f& T0 )
 Matrix4f delta2tr( const Vector6f& d , const Matrix4f& T0 )
 {
 	Matrix3f R;
-	Matrix4f T1;
+	Matrix4f mixThres;
 
 	for( int i=0; i<3; i++)
 	{
 		R(i,i) = 1.0f;
-		T1(3,i) = 0.0f;
+		mixThres(3,i) = 0.0f;
 	}
 	R(1,0) =  d(5,0);
 	R(2,0) = -d(4,0);
@@ -197,13 +197,13 @@ Matrix4f delta2tr( const Vector6f& d , const Matrix4f& T0 )
 	R(0,2) =  d(4,0);
 	R(1,2) = -d(3,0);
 
-	T1.block(0,0,3,3) = R*T0.block(0,0,3,3);
+	mixThres.block(0,0,3,3) = R*T0.block(0,0,3,3);
 
-	T1.block(0,3,3,1) = T0.block(0,3,3,1) + d.block(0,0,3,1);
+	mixThres.block(0,3,3,1) = T0.block(0,3,3,1) + d.block(0,0,3,1);
 	
-	T1(3,3) = 1.0f;
+	mixThres(3,3) = 1.0f;
 
-	return T1;
+	return mixThres;
 	
 	/*
     delta = eye(4,4) + [skew(d(4:6)) d(1:3); 0 0 0 0];

@@ -60,8 +60,8 @@ void colorDiffer(const Mat target, Mat detect, vector<pair <Point, float>> & dra
 			rgb2cmyk(target.at<Vec3b>(y, x), targetCMYK);
 			rgb2cmyk(detect.at<Vec3b>(y, x), detectCMYK);
 			absdiff(targetCMYK, detectCMYK, differ);
-			float differMean = mean(differ)[0];
-			//float differMean = max(max(max(differ[0], differ[1]), differ[2]), differ[3]);
+			//float differMean = mean(differ)[0];
+			float differMean = max(max(max(differ[0], differ[1]), differ[2]), differ[3]);
 
 			differMap.at<uchar>(y, x) = (uchar)differMean;
 			if (differMean > DRAWTHRESH){
@@ -83,7 +83,7 @@ void colorDiffer(const Mat target, Mat detect, vector<pair <Point, float>> & dra
 #endif 
 	
 	Mat maxima;
-	nonMaximaSuppression(differMap, 3, maxima, mask);	// find the local maxima with a window of 50
+	nonMaximaSuppression(differMap, 4, maxima, mask);	// find the local maxima with a window of 50
 	differMap.setTo(0, maxima == 0);	// optionally set all non-maxima to zero
 
 #if DISPLAY

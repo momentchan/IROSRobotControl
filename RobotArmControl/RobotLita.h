@@ -107,7 +107,7 @@ Eigen::Vector3f rr2delta( const Eigen::Matrix3f& R1, const Eigen::Matrix3f& R0);
 
 Eigen::Matrix3f delta2rr( const Eigen::Vector3f& d , const Eigen::Matrix3f& R0 );
 
-Vector6f tr2delta( const Eigen::Matrix4f& T1, const Eigen::Matrix4f& T0 );
+Vector6f tr2delta( const Eigen::Matrix4f& mixThres, const Eigen::Matrix4f& T0 );
 
 Eigen::Matrix4f delta2tr( const Vector6f& d , const Eigen::Matrix4f& T0 );
 

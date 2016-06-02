@@ -65,9 +65,6 @@ bool ColorSort(StrokeCluster c1, StrokeCluster c2){
  	pair <int, double> p1 = c1.getMaxInfo();
 	pair <int, double> p2 = c2.getMaxInfo();
 	if (t1 != 0){
-		/*if (p1.second > p2.second)
-			return true;
-		return false;*/
 		if (c1.getColor()[3] < c2.getColor()[3])
 			return true;
 		return false;
@@ -92,9 +89,9 @@ vector<StrokeCluster> StrokesGeneration(const Mat img, Mat & canvas, const vecto
 	rgb2cmyk(rgb, cmyk);
 	float angle = angles.at<float>(y, x) + PI / 2;
 	if (10.0 / iteration>5)
-		StrokeClusters[0].addStroke(Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 10.0));
+		StrokeClusters[0].addStroke(Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 20.0));
 	else
-		StrokeClusters[0].addStroke(Stroke(rgb, cmyk, Point2f(x, y), 5, angle, 10.0));
+		StrokeClusters[0].addStroke(Stroke(rgb, cmyk, Point2f(x, y), 5, angle, 20.0));
 
 
 	// Color clustering
@@ -114,9 +111,9 @@ vector<StrokeCluster> StrokesGeneration(const Mat img, Mat & canvas, const vecto
 				minDiffer = colorDiffer;
 				float angle = angles.at<float>(y, x) + PI / 2;
 				if (10.0 / iteration>5)
-					stroke = Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 10.0);
+					stroke = Stroke(rgb, cmyk, Point2f(x, y), 10.0 / iteration, angle, 20.0);
 				else
-					stroke = Stroke(rgb, cmyk, Point2f(x, y), 5, angle, 10.0);
+					stroke = Stroke(rgb, cmyk, Point2f(x, y), 5, angle, 20.0);
 			}
 		}
 		// Add into cluster

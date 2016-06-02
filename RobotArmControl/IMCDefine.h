@@ -89,7 +89,7 @@
 #define RIO_INT_NO                0x0
 #define RIO_INT_RISE              0x1
 #define RIO_INT_FALL              0x2
-#define RIO_INT_LEVEL             0x3
+#define RIO_INT_dip_level             0x3
 
 #define RESET_TMR                 0x01
 #define RESET_DDA                 0x02
@@ -120,7 +120,7 @@
 #define LIO_INT_NO                0x0
 #define LIO_INT_RISE              0x1
 #define LIO_INT_FALL              0x2
-#define LIO_INT_LEVEL             0x3
+#define LIO_INT_dip_level             0x3
 
 #define LIO_OTP0                   0x0
 #define LIO_OTP1                   0x1
